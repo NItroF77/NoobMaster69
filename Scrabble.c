@@ -3,15 +3,15 @@
 #include <stdlib.h>
 //modular list
 int FindWord(char word[]);
-void Create_table();
-void display_table();
+void Initiate_table();
+void show_table();
 //variabel global
 char t[15][15][5][7];
-int tot1=0;
-int tot2=0;
+int TotalScoreP1=0;
+int TotalScorep2=0;
 int tcount=0;
 //modular-modular code
-void create_table()
+void Initiate_table()
 {
     int i,j,r1,r2,count=1;
 
@@ -97,10 +97,10 @@ void create_table()
             }
         }
     }
-    display_table();
+    show_table();
 
 }
-void display_table()
+void show_table()
 {
     int i,j,count=1,r1,r2;
     printf("        1      2      3      4      5      6      7      8      9     10     11     12     13     14     15\n");
