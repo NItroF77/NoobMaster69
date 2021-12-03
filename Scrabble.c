@@ -1,8 +1,11 @@
-#include "search_ver2.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+//modular list
 int FindWord(char word[]);
+void Create_table();
+void display_table();
+//modular-modular code
 void create_table()
 {
     int i,j,r1,r2,count=1;
