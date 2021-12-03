@@ -5,6 +5,11 @@
 int FindWord(char word[]);
 void Create_table();
 void display_table();
+//variabel global
+char t[15][15][5][7];
+int tot1=0;
+int tot2=0;
+int tcount=0;
 //modular-modular code
 void create_table()
 {
@@ -157,6 +162,6 @@ int FindWord(char word[])
 
 }
 int main(){
-
+	create_table();
 	return 0;
 }
