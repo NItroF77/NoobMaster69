@@ -76,11 +76,12 @@ void Credit()
 
 void insert_data_player(){
 	int i;
-	for(i=0;i<2;i++){
-	printf("masukan nama Player %d :\n",i+1);
-	gets(p.usr[i]);
+	for(i=1;i<3;i++){
+		printf("masukan nama Player %d :\n",i);
+		if (scanf("%s", p.usr[i]) != 1)
+            break;
 	}
-	printf("Selamat Datang %s dan %s",p.usr[0],p.usr[1]);
+	printf("Selamat Datang %s dan %s",p.usr[1],p.usr[2]);
 }
 
 int FindWord(char *search_for_string)
