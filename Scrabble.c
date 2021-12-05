@@ -20,14 +20,14 @@ typedef struct Player_Data{
 }Players;
 typedef struct Game_Data{
 	int Difficulty;
-}Diff;
+}G_data;
 //variabel global
 char t[15][15];
 int TotalScoreP1=0;
 int TotalScorep2=0;
 int tcount=0;
 Players p;
-Diff diff;
+G_data Gt;
 int turn=0;
 FILE *ptr_to_file;
 //modular-modular code
@@ -83,7 +83,41 @@ void insert_data_player(){
 	}
 	printf("Selamat Datang %s dan %s",p.usr[1],p.usr[2]);
 }
+void show_board()
+{
+	int i;
+	int board[] ={4, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 4, 5,
+			    0, 3, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 3, 0, 5,
+			    0, 0, 3, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 5,
+			    1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 1, 5,
+			    0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5,
+			    0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 5,
+			    0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 5,
+			    4, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 4, 5,
+			    0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 5,
+			    0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 5,
+			    0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5,
+			    1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 1, 5,
+			    0, 0, 3, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 5,
+			    0, 3, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 3, 0, 5,
+			    4, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 4};
+	for(i=0;i<225;i++){
+		if(i%14==0){
+			printf("\n");
+		}
+		else{
+		switch(board[i]){
+			case 0 : printf(" - ");break;
+			case 1 : printf(" 1 ");break;
+			case 2 : printf(" 2 ");break;
+			case 3 : printf(" 3 ");break;
+			case 4 : printf(" 4 ");break;
+			case 5 : printf(" 5 ");break;
+		}
+		}
 
+	}
+}
 int FindWord(char *search_for_string)
 {
 	int i;
@@ -101,5 +135,6 @@ int FindWord(char *search_for_string)
 }
 int main(){
 	MainMenu();
+	show_board();
 	return 0;
 }
