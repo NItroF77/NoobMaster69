@@ -59,7 +59,7 @@ void Game_Mode()
 {	
 	int pilihan;
 	char empty=' ';
-	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
+	printf("%50.cPilih Game Mode : \n%50.c1.Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : insert_data_player();break;
@@ -76,11 +76,11 @@ void Credit()
 
 void insert_data_player(){
 	int i;
-	for(i=1;i<3;i++){
-	printf("masukan nama Player %d :\n",i);
+	for(i=0;i<2;i++){
+	printf("masukan nama Player %d :\n",i+1);
 	gets(p.usr[i]);
 	}
-	printf("Selamat Datang %s dan %s",p.usr[1],p.usr[2]);
+	printf("Selamat Datang %s dan %s",p.usr[0],p.usr[1]);
 }
 
 int FindWord(char *search_for_string)
