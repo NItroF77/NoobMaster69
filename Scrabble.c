@@ -8,7 +8,8 @@ void MainMenu();
 void Game_Mode();
 void Credit();
 void insert_data_player();
-void Initiate_table();
+void Initiate_boardC();
+void Initiate_boardH();
 void show_table();
 // user defined data
 typedef struct Player_Data{
@@ -19,15 +20,15 @@ typedef struct Player_Data{
 	int words2;
 }Players;
 typedef struct Game_Data{
-	int Difficulty;
-}G_data;
+	int Daticulty;
+	int BoardS[15][15];
+	char BoardM[15][15];
+}Dat;
 //variabel global
-char t[15][15];
-int TotalScoreP1=0;
-int TotalScorep2=0;
 int tcount=0;
+int M;
 Players p;
-G_data Gt;
+Dat dat;
 int turn=0;
 FILE *ptr_to_file;
 //modular-modular code
@@ -59,7 +60,8 @@ void Game_Mode()
 {	
 	int pilihan;
 	char empty=' ';
-	printf("%50.cPilih Game Mode : \n%50.c1.Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
+	
+	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : insert_data_player();break;
@@ -73,50 +75,91 @@ void Credit()
 	char empty=' ';
 	printf("%40.c Credit By : \n %40.cFariz Muhammad Ibnu \n %40.cHanri Fajar \n %40.cRaihan Fuad S.",empty,empty,empty,empty);
 }
-
-void insert_data_player(){
-	int i;
-	for(i=1;i<3;i++){
-		printf("masukan nama Player %d :\n",i);
-		if (scanf("%s", p.usr[i]) != 1)
-            break;
+void SetDiff(){
+	int choose;
+	char empty=' ';
+	printf("%45cPilih tingkat kesulitan \n%45c1. Casual \n%45c2. Hard\n",empty,empty,empty);
+	scanf("%d",&choose);
+	if(choose==1){
+		Initiate_boardC();
 	}
-	printf("Selamat Datang %s dan %s",p.usr[1],p.usr[2]);
+	else if(choose==2){
+		Initiate_boardH();
 }
-void show_board()
-{
-	int i;
-	int board[] ={4, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 4, 5,
-			    0, 3, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 3, 0, 5,
-			    0, 0, 3, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 5,
-			    1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 1, 5,
-			    0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5,
-			    0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 5,
-			    0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 5,
-			    4, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 4, 5,
-			    0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 5,
-			    0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 5,
-			    0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 5,
-			    1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 1, 5,
-			    0, 0, 3, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 5,
-			    0, 3, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 3, 0, 5,
-			    4, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 0, 0, 4};
-	for(i=0;i<225;i++){
-		if(i%14==0){
-			printf("\n");
+}
+void Initiate_boardC(){
+	int i,j,k=10;
+	int board[10][10]={
+				{2,1,1,1,1,3,1,1,1,2},
+				{1,2,1,1,3,1,1,1,2,1},
+				{1,1,2,1,1,1,1,2,1,1},
+				{1,1,1,2,1,1,2,1,1,1},
+				{3,1,1,1,3,3,1,1,1,2},
+				{1,3,1,1,3,3,1,1,3,1},
+				{1,1,1,2,1,1,2,1,1,1},
+				{1,1,2,1,1,1,1,2,1,1},
+				{1,2,1,1,3,1,1,1,2,1},
+				{2,1,1,1,1,3,1,1,1,2},
+				};
+	for(i=0;i<k;i++){
+		for(j=0;j<k;j++){
+			dat.BoardS[i][j]=board[i][j];
 		}
-		else{
-		switch(board[i]){
-			case 0 : printf(" - ");break;
-			case 1 : printf(" 1 ");break;
-			case 2 : printf(" 2 ");break;
-			case 3 : printf(" 3 ");break;
-			case 4 : printf(" 4 ");break;
-			case 5 : printf(" 5 ");break;
-		}
-		}
-
 	}
+	M=10;
+}
+void Initiate_boardH(){
+	int i,j,k=15;
+	int board[15][15]={
+				{3,1,1,1,1,3,1,1,1,3,1,1,1,1,3},
+				{1,2,1,1,1,1,2,1,2,1,1,1,1,2,1},
+				{1,1,2,1,1,1,1,3,1,1,1,1,2,1,1},
+				{1,1,1,2,1,1,1,1,1,1,1,2,1,1,1},
+				{1,1,1,1,2,1,1,1,1,1,2,1,1,1,1},
+				{3,1,1,1,1,2,1,1,1,2,1,1,1,1,3},
+				{1,2,1,1,1,1,2,1,2,1,1,1,1,2,1},
+				{1,1,3,1,1,1,1,5,1,1,1,1,3,1,1},
+				{1,2,1,1,1,1,2,1,2,1,1,1,1,2,1},
+				{3,1,1,1,1,2,1,1,1,2,1,1,1,1,3},
+				{1,1,1,1,2,1,1,1,1,1,2,1,1,1,1},
+				{1,1,1,2,1,1,1,1,1,1,1,2,1,1,1},
+				{1,1,2,1,1,1,1,3,1,1,1,1,2,1,1},
+				{1,2,1,1,1,1,2,1,2,1,1,1,1,2,1},
+				{3,1,1,1,1,3,1,1,1,3,1,1,1,1,3}};
+	for(i=0;i<k;i++){
+		for(j=0;j<k;j++){
+			dat.BoardS[i][j]=board[i][j];
+		}
+	}
+	M=15;
+}
+void insert_data_player(){
+	system("cls");
+	SetDiff();
+		printf("masukan nama Player %d :\n",1);
+		fflush(stdin);
+		gets(p.usr[0]);
+		printf("masukan nama Player %d :\n",2);
+		fflush(stdin);
+		gets(p.usr[1]);
+		printf("Selamat Datang %s dan %s\n",p.usr[0],p.usr[1]);
+		p.scr1=0;
+		p.scr2=0;
+}
+void show_board(){
+	int i,j;
+	for(i=0;i<M;i++){
+		for(j=0;j<M;j++){
+			if(dat.BoardM[i][j]=='\0'){
+				printf(" %d ",dat.BoardS[i][j]);
+			}
+			else{
+				printf(" %c ",dat.BoardM[i][j]);
+			}
+		}
+		printf("\n");
+	}
+	printf("%s with score : %d Vs %s with score : %d",p.usr[0],p.scr1,p.usr[1],p.scr2);
 }
 int FindWord(char *search_for_string)
 {
