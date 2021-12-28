@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 //modular list
-int FindWord(char *search_for_string);
 void MainMenu();
 void Game_Mode();
 void Credit();
@@ -11,9 +10,11 @@ void insert_data_player();
 void Initiate_boardC();
 void Initiate_boardH();
 void show_table();
-int PutWord(char wordC[]);
+int PutWord(char wordC[], int size_of_word);
+int FindWord(char *search_for_string,int size_s);
 void add_score(char word[],int Location[][2]);
 int Check_Multi(int score,int LocationX,int LocationY);
+void end_game();
 // user defined data
 typedef struct Player_Data{
 	char usr[2][30];
@@ -192,9 +193,9 @@ void show_board(){
 void InputTiles()
 {	
 	char cnfrm,Position,cekPosX,cekPosY;
-	int i,PosX,PosY,cekPos=0;
+	int i,PosX,PosY,cekPos=0,countL;
 	int PosWord[7][2];
-	char word[7];
+	char word[1024];
 	char tiles[7];
 	if(turn==0){
 		turn=1;
@@ -208,12 +209,14 @@ void InputTiles()
 		tiles[i]="AAAAAAAAAABBCCDDDDEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLLMMNNNNNNOOOOOOOPPQRRRRRRSSSSTTTTTTUUUUVVWWXYYZ"[rand() % 97];
 	}
 	menu :
+			countL=0;
 			for(i=0;i<7;i++){
 				printf("%c ",tiles[i]);
 			}
 			printf("\n");
 			fflush(stdin);
 			printf("Vertical (V) or Horizontal (H) and the initial point with format (column,row), ex: H,8,8 or h,8,8\n");
+			fflush(stdin);
 			scanf("%c,%d,%d",&Position,&PosX,&PosY);
 			cekPosX=PosX+'0';
 			cekPosY=PosY+'0';
@@ -233,9 +236,11 @@ void InputTiles()
 			}
 			fflush(stdin);
 			printf("Please input a word\n");
-			fgets(word,7,stdin);
-			fflush(stdin);
-			for(i=0;i<sizeof(word);i++){
+			gets(word);
+			for(i=0;word[i]!='\0';i++){
+				countL++;
+			}
+			for(i=0;word[i]!='\0';i++){
 				if(word[i]>90){
 					word[i]=word[i]-32;
 				}
@@ -247,45 +252,54 @@ void InputTiles()
 			}
 			
 			while(1){
-				if(PutWord(word)==1){
+				if(PutWord(word,countL)){
 					if(Position=='V'){
-						for(i=0;i<sizeof(word);i++){
-							PosWord[i][0]=PosX;
-							PosWord[i][1]=PosY;
+						for(i=0;i<word[i]!='\0';i++){
+							PosWord[i][0]=PosX-1;
+							PosWord[i][1]=PosY-1;
 							dat.BoardM[PosY-1][PosX-1]=word[i];
 							PosY++;
 						}
 					}
 						else if(Position=='H'){
-							for(i=0;i<sizeof(word);i++){
+							for(i=0;i<word[i]!='\0';i++){
 								dat.BoardM[PosY-1][PosX-1]=word[i];
 								PosX++;
 							}
 						}
 					add_score(word,PosWord);
 					printf("Word that you input has been placed\n");
-					tcount+=sizeof(word);
+					tcount+=countL;
 					break;
 				}
 				else{
 					printf("word that you input failed to be placed\n");
-					goto menu;
+					goto menu;break;
 				}
 			}
 	system("cls");
-	show_board();
+	if(tcount>100){
+		end_game();
+	}
+	else{
+		show_board();
+	}
 }
 
-int PutWord(char wordC[])
+int PutWord(char wordC[], int size_of_word)
 {
-	if(FindWord(wordC)){
+	if(FindWord(wordC,size_of_word)==1){
 		return 1;
+	}
+	else if(FindWord(wordC,size_of_word)==2){
+		printf("exceed limit input");
+		return 0;
 	}
 	else{
 		return 0;
 	}
 }
-int FindWord(char *search_for_string)
+int FindWord(char *search_for_string,int size_s)
 {
 	int i;
 	char word[1024];
@@ -294,14 +308,25 @@ int FindWord(char *search_for_string)
 	{
 		if (strstr(word, search_for_string) != NULL)
 		{
-			return 1;
+			if(size_s>7){
+				return 2;
+			}
+			else if(size_s==7 || size_s<3){
+				return 1;
+			}
+			else if(strlen(word)==size_s+1){
+				return 1;
+			}
+			else{
+				return 0;
+			}
 		}
 	}
 	return 0;
 }
 void add_score(char word[],int Location[][2]){
 	int i,total_score=0,scoreL;
-	for(i=0;i<sizeof(word);i++){
+	for(i=0;i<word[i]!='\0';i++){
 		scoreL=0;
 		if(word[i]=='A'|| word[i]=='E' || word[i]=='I' || word[i]=='L'  || word[i]=='N' || word[i]=='O' || word[i]=='R' || word[i]=='S' || word[i]=='T' || word[i]=='U'){
 			scoreL+=1;
@@ -310,7 +335,7 @@ void add_score(char word[],int Location[][2]){
 			scoreL+=2;
 
 		}
-		else if(word[i]=='B' || 'C' || word[i]=='M' || word[i]=='P'){
+		else if(word[i]=='B' || word[i]=='C' || word[i]=='M' || word[i]=='P'){
 			scoreL+=3;
 		}
 		else if(word[i]=='F' || word[i]=='H' || word[i]=='V' || word[i]=='W' || word[i]=='d' || word[i]=='Y'){
@@ -328,12 +353,11 @@ void add_score(char word[],int Location[][2]){
 		scoreL=Check_Multi(scoreL,Location[i][0],Location[i][1]);
 		total_score+=scoreL;
 	}
-	
 	p.scr[turn]=total_score;
 }
 int Check_Multi(int score,int LocationX,int LocationY)
 {
-	if(dat.BoardS[LocationY][LocationX]==1){
+	if(dat.BoardS[LocationY][LocationX]==1 || dat.BoardS[LocationY][LocationX]==6 || dat.BoardS[LocationY][LocationX]==7){
 		return score*1;
 	}
 	else if(dat.BoardS[LocationY][LocationX]==2){
@@ -341,6 +365,18 @@ int Check_Multi(int score,int LocationX,int LocationY)
 	}
 	else if(dat.BoardS[LocationY][LocationX]==3){
 		return score*3;
+	}
+	else if(dat.BoardS[LocationY][LocationX]==5){
+		return score*5;
+	}
+}
+void end_game()
+{
+	if(p.scr[0]>p.scr[1]){
+	printf("The winner is %s with score %d",p.usr[0],p.scr[0]);
+	}
+	else{
+	printf("The winner is %s with score %d",p.usr[1],p.scr[1]);
 	}
 }
 int main(){
