@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 /*
-underdevelopement note : fitur continue game, how to play, timer.
+underdevelopement note : fitur continue game, how to play.
 bug note :
 ketika menginput melebihi papan masih bisa. ex v,8,13 input queen jdi QUE
 peraturan mengecek posisi menumpuk kata sebelumnya.
 membuat bot.
-memasukkan timer.
+timer bug.
 */
 
 //modular list
@@ -20,10 +21,15 @@ void insert_data_player();
 void Initiate_boardC();
 void Initiate_boardH();
 void show_table();
-int PutWord(char wordC[], int size_of_word);
+void InputTiles();
+int starttime();
+int endtime();
+int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY);
 int FindWord(char *search_for_string,int size_s);
+int Check_Pos(char Position,int LocX,int LocY,int length);
 void add_score(char word[],int Location[][2]);
-int Check_Multi(int score,int LocationX,int LocationY);
+int Check_MultiT(int score,int LocationX,int LocationY);
+int Check_MultiW(int temp_score,char word[],int Location[][2]);
 void end_game();
 // user defined data
 typedef struct Player_Data{
@@ -39,6 +45,7 @@ typedef struct Game_Data{
 //variabel global
 int tcount=0;
 int M;
+int time_limit;
 Players p;
 Dat dat;
 int turn=1;
@@ -100,9 +107,9 @@ void SetDiff(){
 	printf("%45cPilih tingkat kesulitan \n%45c1. Casual (Short Mode) \n%45c2. Casual \n%45c3. Hard\n",empty,empty,empty,empty);
 	scanf("%d",&choose);
 	switch(choose){
-		case 1 : dat.Diffiticulty=1;Initiate_boardC();break;
-		case 2 : dat.Diffiticulty=2;Initiate_boardH();break;
-		case 3 : dat.Diffiticulty=3;Initiate_boardH();break;
+		case 1 : dat.Diffiticulty=1;time_limit=80;Initiate_boardC();break;
+		case 2 : dat.Diffiticulty=2;time_limit=80;Initiate_boardH();break;
+		case 3 : dat.Diffiticulty=3;time_limit=40;Initiate_boardH();break;
 		default : printf("maaf tidak ada pilihan angka tersebut");getch();system("cls");SetDiff();break;
 	}
 }
@@ -164,6 +171,8 @@ void insert_data_player(){
 		printf("Selamat Datang %s dan %s\n",p.usr[0],p.usr[1]);
 		p.scr[0]=0;
 		p.scr[1]=0;
+		getch();
+		system("cls");
 }
 void show_board(){
 	int i,j;
@@ -216,9 +225,11 @@ void show_board(){
 }
 void InputTiles()
 {	
-	char cnfrm,Position,cekPosX,cekPosY;
+	char cnfrm,Position;
 	int i,PosX,PosY,cekPos=0,countL;
 	int PosWord[7][2];
+	int current_time;
+	double time_passed;
 	char word[1024];
 	char tiles[7];
 	if(turn==0){
@@ -238,12 +249,13 @@ void InputTiles()
 				printf("%c ",tiles[i]);
 			}
 			printf("\n");
-			fflush(stdin);
 			printf("Vertical (V) or Horizontal (H) and the initial point with format (column,row), ex: H,8,8 or h,8,8\n");
+			current_time=starttime();
+			printf("your time to input is %d second\n",time_limit);
 			fflush(stdin);
 			scanf("%c,%d,%d",&Position,&PosX,&PosY);
-			cekPosX=PosX+'0';
-			cekPosY=PosY+'0';
+			current_time=endtime()-current_time;
+			time_passed=((double)current_time)/CLOCKS_PER_SEC;
 			if(Position>90){
 				Position-=32;
 			}
@@ -278,7 +290,7 @@ void InputTiles()
 			}
 			
 			while(1){
-				if(PutWord(word,countL)){
+				if(PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
 					if(Position=='V'){
 						for(i=0;word[i]!='\0';i++){
 							PosWord[i][0]=PosX-1;
@@ -300,21 +312,27 @@ void InputTiles()
 					tcount+=countL;
 					break;
 				}
-				else{
-					printf("word that you input failed to be placed\n");
-					goto menu;break;
+				else if(time_passed>time_limit){
+					printf("time's up\n");
+					getch();
+					system("cls");
+					show_board();
 				}
+					else{
+						printf("word that you input failed to be placed\n");
+						goto menu;break;
+					}
 			}
 	system("cls");
 }
 
-int PutWord(char wordC[], int size_of_word)
+int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY)
 {
-	if(FindWord(wordC,size_of_word)==1){
+	if(FindWord(wordC,size_of_word)==1 && Check_Pos(Pos,LocX,LocY,size_of_word)){
 		return 1;
 	}
 	else if(FindWord(wordC,size_of_word)==2){
-		printf("exceed limit input");
+		printf("exceed limit input\n");
 		return 0;
 	}
 	else{
@@ -347,6 +365,21 @@ int FindWord(char *search_for_string,int size_s)
     }
     return 0;
 }
+int Check_Pos(char Position,int LocX,int LocY,int length)
+{
+	if(Position=='H'){
+		if(LocX+length<15){
+			return 1;
+		}
+	}
+	else if(Position=='V'){
+		if(LocY+length<15){
+			return 1;
+		}
+	}
+	printf("exceed board\n");
+	return 0;
+}
 void add_score(char word[],int Location[][2]){
 	int i,total_score=0,scoreL=0;
 	for(i=0;word[i]!='\0';i++){
@@ -372,12 +405,13 @@ void add_score(char word[],int Location[][2]){
 		else if(word[i]=='Q' || word[i]=='Z'){
 			scoreL+=10;
 		}
-		scoreL=Check_Multi(scoreL,Location[i][0],Location[i][1]);
+		scoreL=Check_MultiT(scoreL,Location[i][0],Location[i][1]);
 		total_score+=scoreL;
 	}
+	total_score=Check_MultiW(total_score,word,Location);
 	p.scr[turn]=p.scr[turn]+total_score;
 }
-int Check_Multi(int score,int LocationX,int LocationY)
+int Check_MultiT(int score,int LocationX,int LocationY)
 {
 	if(dat.BoardS[LocationY][LocationX]==1 || dat.BoardS[LocationY][LocationX]==6 || dat.BoardS[LocationY][LocationX]==7){
 		return score*1;
@@ -392,6 +426,19 @@ int Check_Multi(int score,int LocationX,int LocationY)
 		return score*5;
 	}
 }
+int Check_MultiW(int temp_score,char word[],int Location[][2])
+{
+	int i;
+	for(i=0;word[i]!='\0';i++){
+		if(dat.BoardS[Location[i][0]][Location[i][1]]==6){
+			temp_score=temp_score*2;
+		}
+		else if(dat.BoardS[Location[i][0]][Location[i][1]]==7){
+			temp_score=temp_score*3;
+		}
+	}
+	return temp_score;
+}
 void end_game()
 {
 	if(p.scr[0]>p.scr[1]){
@@ -400,6 +447,18 @@ void end_game()
 	else{
 	printf("The winner is %s with score %d",p.usr[1],p.scr[1]);
 	}
+}
+int starttime()
+{
+    clock_t t;
+    t = clock();
+    return t;
+}
+int endtime()
+{
+    clock_t t;
+    t = clock();
+    return t;
 }
 int main(){
 	dat.Diffiticulty=5;
