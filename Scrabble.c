@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <time.h>
 /*
-underdevelopement note : fitur continue game, how to play.
+underdevelopement note : fitur continue game, how to play, timer.
 bug note :
 ketika menginput melebihi papan masih bisa. ex v,8,13 input queen jdi QUE
 peraturan mengecek posisi menumpuk kata sebelumnya.
 membuat bot.
-timer bug.
+memasukkan timer.
 */
 
 //modular list
@@ -24,6 +24,7 @@ void show_table();
 void InputTiles();
 int starttime();
 int endtime();
+int CheckTiles(char compare[],char word[]);
 int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY);
 int FindWord(char *search_for_string,int size_s);
 int Check_Pos(char Position,int LocX,int LocY,int length);
@@ -231,7 +232,7 @@ void InputTiles()
 	int current_time;
 	double time_passed;
 	char word[1024];
-	char tiles[7];
+	char tiles[7];char ctiles[7];
 	if(turn==0){
 		turn=1;
 	}
@@ -248,6 +249,7 @@ void InputTiles()
 			for(i=0;i<7;i++){
 				printf("%c ",tiles[i]);
 			}
+			strcpy(ctiles,tiles);
 			printf("\n");
 			printf("Vertical (V) or Horizontal (H) and the initial point with format (column,row), ex: H,8,8 or h,8,8\n");
 			current_time=starttime();
@@ -289,43 +291,57 @@ void InputTiles()
 				goto menu;
 			}
 			
-			while(1){
-				if(PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
-					if(Position=='V'){
-						for(i=0;word[i]!='\0';i++){
-							PosWord[i][0]=PosX-1;
-							PosWord[i][1]=PosY-1;
-							dat.BoardM[PosY-1][PosX-1]=word[i];
-							PosY++;
+			if(CheckTiles(ctiles,word) && PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
+				if(Position=='V'){
+					for(i=0;word[i]!='\0';i++){
+						PosWord[i][0]=PosX-1;
+						PosWord[i][1]=PosY-1;
+						dat.BoardM[PosY-1][PosX-1]=word[i];
+						PosY++;
+					}
+				}
+				else if(Position=='H'){
+					for(i=0;word[i]!='\0';i++){
+						PosWord[i][0]=PosX-1;
+						PosWord[i][1]=PosY-1;
+						dat.BoardM[PosY-1][PosX-1]=word[i];
+							PosX++;
 						}
 					}
-					else if(Position=='H'){
-						for(i=0;word[i]!='\0';i++){
-							PosWord[i][0]=PosX-1;
-							PosWord[i][1]=PosY-1;
-							dat.BoardM[PosY-1][PosX-1]=word[i];
-								PosX++;
-							}
-						}
-					add_score(word,PosWord);
-					printf("Word that you input has been placed\n");
-					tcount+=countL;
-					break;
+				add_score(word,PosWord);
+				printf("Word that you input has been placed\n");
+				tcount+=countL;
 				}
-				else if(time_passed>time_limit){
-					printf("time's up\n");
-					getch();
-					system("cls");
-					show_board();
-				}
-					else{
-						printf("word that you input failed to be placed\n");
-						goto menu;break;
-					}
+			else if(time_passed>time_limit){
+				printf("time's up\n");
+				getch();
+				system("cls");
+				show_board();
 			}
+			else{
+				printf("word that you input failed to be placed\n");
+				goto menu;
+				}
 	system("cls");
 }
-
+int CheckTiles(char compare[],char word[]){
+ 	int i,j,check;
+ 	for(i=0;word[i]!='\0';i++){
+ 		check=0;
+ 		for(j=0;compare[j]!='\0';j++){
+ 			if(word[i]==compare[j]){
+ 				compare[j]='*';
+ 				check=1;
+ 				break;
+			 }
+		}
+		if(check==0){
+			printf("incorrect letter's input\n");
+			return 0;
+		}
+	 }
+	 return 1;
+ }
 int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY)
 {
 	if(FindWord(wordC,size_of_word)==1 && Check_Pos(Pos,LocX,LocY,size_of_word)){
@@ -335,9 +351,7 @@ int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY)
 		printf("exceed limit input\n");
 		return 0;
 	}
-	else{
-		return 0;
-	}
+	return 0;
 }
 int FindWord(char *search_for_string,int size_s)
 {
