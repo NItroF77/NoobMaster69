@@ -95,7 +95,25 @@ void Game_Mode()
 }
 void HowToPlay()
 {
-	printf("dalam tahap pengembangan");
+	int i;
+	char empty=' ';
+	printf("\n%46.c%c",empty,201);
+ 	for(i=0;i<16;i++){printf("%c",205);}
+	printf("%c",187);
+	printf("\n%47.c%c%2.cHOW TO PLAY%3.c%c",186,empty,empty,186);
+	printf("\n%46.c%c",empty,200);
+ 	for(i=0;i<16;i++){printf("%c",205);}printf("%c",188);
+ 	printf("\n\nPada Main Menu:");
+	printf("\n1. Pilih Game Mode\n   Pilih mode Player Vs Player jika ingin melawan player lain atau pilih mode Player Vs Bot jika ingin\n   melawan bot (Komputer)");
+	printf("\n2. Pilih tingkat kesulitan\n   Memilih tingkat kesulitan diantara Casual(Short Mode), Casual, dan Hard");
+	printf("\n3. Memasukkan nama pemain");printf("\n\nSetelah pemain memilih mode, tingkat kesulitan, dan mengisi nama pemain maka game akan dimulai.\n\n");
+	printf("1. Tiap pemain akan diberikan 7 buah huruf yang harus dirangkai menjadi sebuah kata\n");
+	printf("2. Pemain harus menentukan format Vertikal (V) atau Horizontal (H) dan titik awal dengan format (kolom,baris).\n   Contoh: H,8,8 atau h,8,8\n");
+	printf("3. Apabila kata yang dimasukkan itu benar maka giliran akan berganti. Namun bila kata yang dimasukkan itu salah,\n   maka player masih memiliki kesempatan untuk"); 
+	printf("memasukkan kata lagi sebelum waktu yang dimiliki player habis.\n   Dan jika habis, maka giliran akan berganti.\n");
+	printf("4. Pemain harus mengumpulkan skor sebanyak-banyaknya dengan membuat kata sepanjang mungkin, menggunakan huruf\n   yang memiliki skor tinggi, dan memanfaatkan blok yang dapat menggandakan skor\n");
+	printf("5. Game akan berakhir apabila 100 huruf sudah terpakai\n6. Pemain yang memiliki skor paling banyak akan menjadi pemenangnya");
+	
 }
 void Credit()
 {
