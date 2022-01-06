@@ -3,18 +3,16 @@
 #include <stdlib.h>
 #include <time.h>
 /*
-underdevelopement note : fitur continue game, how to play, timer.
-bug note :
-ketika menginput melebihi papan masih bisa. ex v,8,13 input queen jdi QUE
+underdevelopement note : BOT.
 peraturan mengecek posisi menumpuk kata sebelumnya.
 membuat bot.
-memasukkan timer.
 */
 
 //modular list
 void MainMenu();
 void Game_Mode();
 void ReadSavedData();
+void SaveGame();
 void HowToPlay();
 void Credit();
 void insert_data_player();
@@ -79,7 +77,46 @@ void MainMenu(){
 }
 void ReadSavedData()
 {
-	printf("dalam tahap pengembangan\n");
+	int i,j;
+	if((ptr_to_file=fopen("savedat.txt","r"))==NULL){
+		printf("Failed load data\n");
+		getch();
+		system("cls");
+		MainMenu();
+	}
+	fscanf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",&dat.Diffiticulty,&tcount,&turn,&time_limit, &M,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
+	for(i=0;i<15;i++){
+		for(j=0;j<15;j++){
+			fscanf(ptr_to_file,"%c ",&dat.BoardM[i][j]);
+		}
+	}
+	printf("welcome back! %s and %s\n",p.usr[0], p.usr[1]);
+   	fclose(ptr_to_file);
+   	getch();
+   	system("cls");
+   	if(dat.Diffiticulty==2 || dat.Diffiticulty==2){
+   		Initiate_boardH();
+	   }
+	else if (dat.Diffiticulty==1){
+   		Initiate_boardC();
+	   }
+}
+void SaveGame()
+{
+	int i,j;
+	if((ptr_to_file=fopen("savedat.txt","w"))!=NULL){
+		ptr_to_file=fopen("savedat.txt","w+");
+	}
+	fprintf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,tcount,turn,time_limit, M, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
+	for(i=0;i<15;i++){
+		for(j=0;j<15;j++){
+			fprintf(ptr_to_file,"%c ",dat.BoardM[i][j]);
+		}
+		fprintf(ptr_to_file,"\n");
+	}
+	printf("game saved successfully\n");
+   	fclose(ptr_to_file);
+   	getch();
 }
 void Game_Mode()
 {	
@@ -134,7 +171,7 @@ void SetDiff(){
 }
 void Initiate_boardC(){
 	int i,j,k=10;
-	int board[10][10]={
+	int boardscr[10][10]={
 				{2,1,1,1,1,3,1,1,1,2},
 				{1,2,1,1,3,1,1,1,2,1},
 				{1,1,2,1,1,1,1,2,1,1},
@@ -148,14 +185,14 @@ void Initiate_boardC(){
 				};
 	for(i=0;i<k;i++){
 		for(j=0;j<k;j++){
-			dat.BoardS[i][j]=board[i][j];
+			dat.BoardS[i][j]=boardscr[i][j];
 		}
 	}
 	M=10;
 }
 void Initiate_boardH(){
 	int i,j,k=15;
-	int board[15][15]={
+	int boardscr[15][15]={
 				{7,1,1,1,1,7,1,1,1,7,1,1,1,1,7},
 				{1,2,1,1,1,1,6,1,6,1,1,1,1,2,1},
 				{1,1,2,1,1,1,1,7,1,1,1,1,2,1,1},
@@ -173,7 +210,7 @@ void Initiate_boardH(){
 				{7,1,1,1,1,7,1,1,1,7,1,1,1,1,7}};
 	for(i=0;i<k;i++){
 		for(j=0;j<k;j++){
-			dat.BoardS[i][j]=board[i][j];
+			dat.BoardS[i][j]=boardscr[i][j];
 		}
 	}
 	M=15;
@@ -250,6 +287,8 @@ void InputTiles()
 	int current_time;
 	double time_passed;
 	char word[1024];
+	char temp[7];
+	char save[]="!save";
 	char tiles[7];char ctiles[7];
 	if(turn==0){
 		turn=1;
@@ -273,7 +312,14 @@ void InputTiles()
 			current_time=starttime();
 			printf("your time to input is %d second\n",time_limit);
 			fflush(stdin);
-			scanf("%c,%d,%d",&Position,&PosX,&PosY);
+			gets(temp);
+			Position=temp[0];
+			PosX=temp[2]-'0';
+			PosY=temp[4]-'0';
+			if((strstr(temp,save))!=NULL){
+				SaveGame();
+				goto menu;
+			}
 			current_time=endtime()-current_time;
 			time_passed=((double)current_time)/CLOCKS_PER_SEC;
 			if(Position>90){
@@ -282,6 +328,7 @@ void InputTiles()
 			if(Position=='H' || Position=='V'){
 				cekPos=1;
 			}
+			
 			else{
 				printf("incorrect input position\n");
 				getch();
@@ -385,16 +432,20 @@ int FindWord(char *search_for_string,int size_s)
         if (strstr(word, search_for_string) != NULL)
         {
             if(size_s>7){
+            	fclose(ptr_to_file);
                 return 2;
             }
             else if(size_s==7 || size_s<3){
+            	fclose(ptr_to_file);
                 return 1;
             }
             else if(strlen(word)==size_s+1){
+            	fclose(ptr_to_file);
                 return 1;
             }
         }
     }
+    fclose(ptr_to_file);
     return 0;
 }
 int Check_Pos(char Position,int LocX,int LocY,int length)
