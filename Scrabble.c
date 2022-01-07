@@ -22,7 +22,7 @@ void show_table();
 void InputTiles();
 int starttime();
 int endtime();
-int CheckTiles(char compare[],char word[]);
+int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y);
 int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY);
 int FindWord(char *search_for_string,int size_s);
 int Check_Pos(char Position,int LocX,int LocY,int length);
@@ -103,11 +103,17 @@ void ReadSavedData()
 }
 void SaveGame()
 {
-	int i,j;
+	int i,j,cturn;
+	if(turn==0){
+		cturn=1;
+	}
+	else if(turn==1){
+		cturn=0;
+	}
 	if((ptr_to_file=fopen("savedat.txt","w"))!=NULL){
 		ptr_to_file=fopen("savedat.txt","w+");
 	}
-	fprintf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,tcount,turn,time_limit, M, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
+	fprintf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,tcount,cturn,time_limit, M, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
 	for(i=0;i<15;i++){
 		for(j=0;j<15;j++){
 			fprintf(ptr_to_file,"%c ",dat.BoardM[i][j]);
@@ -289,6 +295,9 @@ void InputTiles()
 	char word[1024];
 	char temp[7];
 	char save[]="!save";
+	char pass[]="!pass";
+	char forfeit[]="!forfeit";
+	char endG[]="!endgame";
 	char tiles[7];char ctiles[7];
 	if(turn==0){
 		turn=1;
@@ -319,6 +328,20 @@ void InputTiles()
 			if((strstr(temp,save))!=NULL){
 				SaveGame();
 				goto menu;
+			}
+			else if((strstr(temp,forfeit))!=NULL){
+				p.scr[turn]=0;
+				tcount+=100;
+				end_game();
+			}
+			else if((strstr(temp,pass))!=NULL){
+				getch();
+				system("cls");
+				show_board();
+			}
+			else if((strstr(temp,endG))!=NULL){
+				tcount+=100;
+				end_game();
 			}
 			current_time=endtime()-current_time;
 			time_passed=((double)current_time)/CLOCKS_PER_SEC;
@@ -356,7 +379,7 @@ void InputTiles()
 				goto menu;
 			}
 			
-			if(CheckTiles(ctiles,word) && PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
+			if(CheckTiles(ctiles,word,countL,Position,PosX-1,PosY-1) && PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
 				if(Position=='V'){
 					for(i=0;word[i]!='\0';i++){
 						PosWord[i][0]=PosX-1;
@@ -389,16 +412,29 @@ void InputTiles()
 				}
 	system("cls");
 }
-int CheckTiles(char compare[],char word[]){
+
+int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
+{
  	int i,j,check;
  	for(i=0;word[i]!='\0';i++){
  		check=0;
+ 		if(dir=='V'){
+ 			y+=i;
+		}
+		else if(dir=='H'){
+			x+=i;
+		} 
  		for(j=0;compare[j]!='\0';j++){
- 			if(word[i]==compare[j]){
+ 			if(word[i]==compare[j] || word[i]==dat.BoardM[y][x]){
  				compare[j]='*';
  				check=1;
  				break;
-			 }
+			}
+			else if(word[i]!=dat.BoardM[y][x] && dat.BoardM[y][x]!='\0'){
+				printf("your word positioning overlap with other\n");
+				getch();
+				break;
+			}
 		}
 		if(check==0){
 			printf("incorrect letter's input\n");
@@ -406,7 +442,8 @@ int CheckTiles(char compare[],char word[]){
 		}
 	 }
 	 return 1;
- }
+}
+
 int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY)
 {
 	if(FindWord(wordC,size_of_word)==1 && Check_Pos(Pos,LocX,LocY,size_of_word)){
@@ -525,10 +562,10 @@ int Check_MultiW(int temp_score,char word[],int Location[][2])
 void end_game()
 {
 	if(p.scr[0]>p.scr[1]){
-	printf("The winner is %s with score %d",p.usr[0],p.scr[0]);
+	printf("The winner is %s with score %d\n",p.usr[0],p.scr[0]);
 	}
 	else{
-	printf("The winner is %s with score %d",p.usr[1],p.scr[1]);
+	printf("The winner is %s with score %d\n",p.usr[1],p.scr[1]);
 	}
 }
 int starttime()
