@@ -15,6 +15,7 @@ void ReadSavedData();
 void SaveGame();
 void HowToPlay();
 void Credit();
+void SeeHighScore();
 void insert_data_player();
 void Initiate_boardC();
 void Initiate_boardH();
@@ -34,6 +35,7 @@ void add_score(char word[],int Location[][2]);
 int Check_MultiT(int score,int LocationX,int LocationY);
 int Check_MultiW(int temp_score,char word[],int Location[][2]);
 void end_game();
+void InputScore();
 void ResetGame();
 // user defined data
 typedef struct Player_Data{
@@ -69,14 +71,15 @@ void MainMenu(){
 		else{printf("%c%29.c%c",186,empty,186);}}
 	printf("\n%40.c%c",empty,200);
  	for(i=0;i<29;i++){printf("%c",205);}printf("%c",188);
-	printf("\n%50.cMain Menu :\n%50.c1.Continue Game \n%50.c2.New Game \n%50.c3.How to play \n%50.c4.Credit \n%50.c5.Exit\n",empty,empty,empty,empty,empty,empty);
+	printf("\n%50.cMain Menu :\n%50.c1.Continue Game \n%50.c2.New Game \n%50.c3.How to play \n%50.c4.HighScore \n%50.c5.Credit \n%50.c6.Exit\n",empty,empty,empty,empty,empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : system("cls");ReadSavedData();break;
 		case 2 : system("cls");Game_Mode();break;
 		case 3 : system("cls");HowToPlay();break;
-		case 4 : system("cls");Credit();break;
-		case 5 : exit(1);break;
+		case 4 : SeeHighScore();break;
+		case 5 : system("cls");Credit();break;
+		case 6 : exit(1);break;
 		default :system("cls");MainMenu();break;
 	}
 }
@@ -162,6 +165,19 @@ void HowToPlay()
 	printf("4. Pemain harus mengumpulkan skor sebanyak-banyaknya dengan membuat kata sepanjang mungkin, menggunakan huruf\n   yang memiliki skor tinggi, dan memanfaatkan blok yang dapat menggandakan skor\n");
 	printf("5. Game akan berakhir apabila 100 huruf sudah terpakai\n6. Pemain yang memiliki skor paling banyak akan menjadi pemenangnya");
 	
+}
+void SeeHighScore()
+{
+	int i,scr;
+	char user[30];
+	system("cls");
+	if((ptr_to_file=fopen("scorelist.txt","r"))!=NULL){
+		while(feof(ptr_to_file)==NULL){
+			fscanf(ptr_to_file,"%s %d",user,&scr);
+			printf("%s %d\n",user,scr);
+		}
+		
+	}
 }
 void Credit()
 {
@@ -587,9 +603,13 @@ void end_game()
 	if(p.scr[0]>p.scr[1]){
 	printf("The winner is %s with score %d\n",p.usr[0],p.scr[0]);
 	}
-	else{
+	else if(p.scr[0]<p.scr[1]){
 	printf("The winner is %s with score %d\n",p.usr[1],p.scr[1]);
 	}
+	else{
+		printf("Draw with score %d\n",p.scr[1]);
+	}
+	InputScore();
 	printf("Want to play Again?\n");
 	scanf("%c",&cnfrm);
 	if(cnfrm=='Y' || cnfrm=='y'){
@@ -611,6 +631,12 @@ void ResetGame()
 		}
 	}
 	show_board();
+}
+void InputScore()
+{
+	ptr_to_file=fopen("scorelist.txt","w");
+	fprintf(ptr_to_file,"%s %d \n%s %d",p.usr[0],p.scr[0],p.usr[1],p.scr[1]);
+	fclose(ptr_to_file);
 }
 int starttime()
 {
