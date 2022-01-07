@@ -20,6 +20,10 @@ void Initiate_boardC();
 void Initiate_boardH();
 void show_table();
 void InputTiles();
+void CheckCommand(char command[]);
+int SaveG(char command[]);
+int CheckHoV(char letter);
+int SetUpperCase(char letter);
 int starttime();
 int endtime();
 int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y);
@@ -30,6 +34,7 @@ void add_score(char word[],int Location[][2]);
 int Check_MultiT(int score,int LocationX,int LocationY);
 int Check_MultiW(int temp_score,char word[],int Location[][2]);
 void end_game();
+void ResetGame();
 // user defined data
 typedef struct Player_Data{
 	char usr[2][30];
@@ -222,17 +227,16 @@ void Initiate_boardH(){
 	M=15;
 }
 void insert_data_player(){
+	int i;
 	system("cls");
 	SetDiff();
-		printf("masukan nama Player %d :\n",1);
-		fflush(stdin);
-		gets(p.usr[0]);
-		printf("masukan nama Player %d :\n",2);
-		fflush(stdin);
-		gets(p.usr[1]);
+		for(i=0;i<2;i++){
+			printf("masukan nama Player %d :\n",i+1);
+			fflush(stdin);
+			gets(p.usr[i]);
+		}
 		printf("Selamat Datang %s dan %s\n",p.usr[0],p.usr[1]);
-		p.scr[0]=0;
-		p.scr[1]=0;
+		p.scr[0]=0;p.scr[1]=0;
 		getch();
 		system("cls");
 }
@@ -288,16 +292,12 @@ void show_board(){
 void InputTiles()
 {	
 	char cnfrm,Position;
-	int i,PosX,PosY,cekPos=0,countL;
+	int i,PosX,PosY,countL;
 	int PosWord[7][2];
 	int current_time;
 	double time_passed;
 	char word[1024];
 	char temp[7];
-	char save[]="!save";
-	char pass[]="!pass";
-	char forfeit[]="!forfeit";
-	char endG[]="!endgame";
 	char tiles[7];char ctiles[7];
 	if(turn==0){
 		turn=1;
@@ -325,39 +325,19 @@ void InputTiles()
 			Position=temp[0];
 			PosX=temp[2]-'0';
 			PosY=temp[4]-'0';
-			if((strstr(temp,save))!=NULL){
-				SaveGame();
+			CheckCommand(temp);
+			if((SaveG(temp))==1){
 				goto menu;
-			}
-			else if((strstr(temp,forfeit))!=NULL){
-				p.scr[turn]=0;
-				tcount+=100;
-				end_game();
-			}
-			else if((strstr(temp,pass))!=NULL){
-				getch();
-				system("cls");
-				show_board();
-			}
-			else if((strstr(temp,endG))!=NULL){
-				tcount+=100;
-				end_game();
 			}
 			current_time=endtime()-current_time;
 			time_passed=((double)current_time)/CLOCKS_PER_SEC;
-			if(Position>90){
-				Position-=32;
-			}
-			if(Position=='H' || Position=='V'){
-				cekPos=1;
-			}
-			
-			else{
+			Position=SetUpperCase(Position);
+			if(CheckHoV(Position)==0){
 				printf("incorrect input position\n");
 				getch();
 				goto menu;
 			}
-			if(PosX>15 || PosY>15){
+			if(PosX>M || PosY>M){
 				printf("Position Exceed board\n");
 				getch();
 				goto menu;
@@ -369,9 +349,7 @@ void InputTiles()
 				countL++;
 			}
 			for(i=0;word[i]!='\0';i++){
-				if(word[i]>90){
-					word[i]=word[i]-32;
-				}
+				word[i]=SetUpperCase(word[i]);
 			}
 			printf("%s is word you want to input? Y or N\n",word);
 			scanf("%c",&cnfrm);
@@ -412,7 +390,50 @@ void InputTiles()
 				}
 	system("cls");
 }
-
+int SetUpperCase(char letter)
+{
+	if(letter>90){
+		return letter-32;
+	}
+	return letter;
+}
+int CheckHoV(char letter)
+{
+	if(letter=='V' || letter=='H'){
+		return 1;
+	}
+	return 0;
+}
+int SaveG(char command[])
+{
+	char save[]="!save";
+	if((strstr(command,save))!=NULL){
+		SaveGame();
+		return 1;
+	}
+	return 0;
+}
+void CheckCommand(char command[])
+{
+	char pass[]="!pass";
+	char forfeit[]="!forfeit";
+	char endG[]="!endgame";
+	
+		if((strstr(command,forfeit))!=NULL){
+			p.scr[turn]=0;
+			tcount+=100;
+			end_game();
+		}
+		else if((strstr(command,pass))!=NULL){
+			getch();
+			system("cls");
+			show_board();
+		}
+		else if((strstr(command,endG))!=NULL){
+			tcount+=100;
+			end_game();
+		}
+}
 int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 {
  	int i,j,check;
@@ -561,12 +582,35 @@ int Check_MultiW(int temp_score,char word[],int Location[][2])
 }
 void end_game()
 {
+	char empty=' ';
+	char cnfrm;
 	if(p.scr[0]>p.scr[1]){
 	printf("The winner is %s with score %d\n",p.usr[0],p.scr[0]);
 	}
 	else{
 	printf("The winner is %s with score %d\n",p.usr[1],p.scr[1]);
 	}
+	printf("Want to play Again?\n");
+	scanf("%c",&cnfrm);
+	if(cnfrm=='Y' || cnfrm=='y'){
+		ResetGame();
+	}
+	system("cls");
+	printf("%55c%s",empty,"Good Bye\n");
+	getch();
+	exit(1);
+}
+void ResetGame()
+{
+	int i,j;
+	p.scr[0]=0;p.scr[1]=0;
+	tcount=0;
+	for(i=0;i<M;i++){
+		for(j=0;j<M;j++){
+			dat.BoardM[i][j]='\0';
+		}
+	}
+	show_board();
 }
 int starttime()
 {
@@ -581,12 +625,17 @@ int endtime()
     return t;
 }
 int main(){
+	int tilesLimit;
 	dat.Diffiticulty=5;
 	MainMenu();
+	switch(dat.Diffiticulty){
+		case 1 : tilesLimit=30;break;
+		default : tilesLimit=100;break;
+	}
 	if(dat.Diffiticulty<=3){
-		while(tcount<100){
+		while(tcount<tilesLimit){
 			show_board();
-			}
+		}
 		end_game();
 	}
 	return 0;
