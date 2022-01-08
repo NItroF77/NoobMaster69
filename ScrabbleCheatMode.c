@@ -320,7 +320,7 @@ void InputTiles()
 	double time_passed;
 	char word[1024];
 	char temp[7];
-	char ctiles[8];
+	char ctiles1[8];char ctiles2[8];
 	if(turn==0){
 		turn=1;
 	}
@@ -335,17 +335,17 @@ void InputTiles()
 		SetHTiles();
 	}
 	if(dat.Diffiticulty==1 || dat.Diffiticulty==2){
-		strcpy(ctiles,tiles);
+		strcpy(ctiles1,tiles);
 	}
 	else{
-		strcpy(ctiles,tiles);
-		scramble(ctiles,countLengthH(ctiles));
+		strcpy(ctiles1,tiles);
+		scramble(ctiles1,countLengthH(ctiles1));
 	}
 	menu :
-			countL=0;
-            printf("%s\n",tiles);
+			strcpy(ctiles2,ctiles1);
+            printf("%s",tiles);
 			for(i=0;i<7;i++){
-				printf("%c ",ctiles[i]);
+				printf("%c ",ctiles2[i]);
 			}
 			printf("\n");
 			printf("Vertical (V) or Horizontal (H) and the initial point with format (column,row), ex: H,8,8 or h,8,8\n");
@@ -386,7 +386,7 @@ void InputTiles()
 				goto menu;
 			}
 			
-			if(CheckTiles(ctiles,word,countL,Position,PosX-1,PosY-1) && PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
+			if(CheckTiles(ctiles2,word,countL,Position,PosX-1,PosY-1) && PutWord(word,countL,Position,PosX-1,PosY-1) && time_passed<=time_limit){
 				if(Position=='V'){
 					for(i=0;word[i]!='\0';i++){
 						PosWord[i][0]=PosX-1;
@@ -552,7 +552,6 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 				check2=0;
 				printf("your word positioning overlap with other\n");
 				getch();
-				break;
 			}
 		if(check1==0 || check2==0){
 			printf("incorrect letter's input\n");
