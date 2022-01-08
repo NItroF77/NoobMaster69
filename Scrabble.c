@@ -334,15 +334,15 @@ void InputTiles()
 	else{
 		SetHTiles();
 	}
+	if(dat.Diffiticulty==1 || dat.Diffiticulty==2){
+		strcpy(ctiles,tiles);
+	}
+	else{
+		strcpy(ctiles,tiles);
+		scramble(ctiles,countLengthH(ctiles));
+	}
 	menu :
 			countL=0;
-			if(dat.Diffiticulty==1 || dat.Diffiticulty==2){
-				strcpy(ctiles,tiles);
-			}
-			else{
-				strcpy(ctiles,tiles);
-				scramble(ctiles,countLengthH(ctiles));
-			}
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles[i]);
 			}
