@@ -534,18 +534,12 @@ void CheckCommand(char command[])
 			end_game();
 		}
 }
-int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
+int (char compare[],char word[],int size_s, char dir, int x, int y)
 {
  	int i,j,check1,check2;
  	for(i=0;word[i]!='\0';i++){
  		check1=0;
  		check2=1;
- 		if(dir=='V'){
- 			y+=i;
-		}
-		else if(dir=='H'){
-			x+=i;
-		} 
  		for(j=0;compare[j]!='\0';j++){
  			if(word[i]==compare[j] || word[i]==dat.BoardM[y][x]){
  				compare[j]='*';
@@ -562,6 +556,12 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 		if(check1==0 || check2==0){
 			printf("incorrect letter's input\n");
 			return 0;
+		}
+		if(dir=='V'){
+ 			y+=i;
+		}
+		else if(dir=='H'){
+			x+=i;
 		}
 	 }
 	 return 1;
