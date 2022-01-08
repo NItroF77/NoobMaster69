@@ -552,6 +552,7 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 				check2=1;
 			}
 		else{
+			printf("(%c,%c)\n",word[i],dat.BoardM[y][x]);
 			printf("your word positioning overlap with other\n");
 			getch();
 		}
