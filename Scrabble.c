@@ -546,13 +546,13 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
  				check1=1;
  				break;
 			}
-			if(word[i]!=dat.BoardM[y][x] && dat.BoardM[y][x]!='\0'){
+		}
+		if(word[i]!=dat.BoardM[y][x] && dat.BoardM[y][x]!='\0'){
 				check2=0;
 				printf("your word positioning overlap with other\n");
 				getch();
 				break;
 			}
-		}
 		if(check1==0 || check2==0){
 			printf("incorrect letter's input\n");
 			return 0;
