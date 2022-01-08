@@ -343,7 +343,7 @@ void InputTiles()
 	}
 	menu :
 			strcpy(ctiles2,ctiles1);
-            printf("%s",tiles);
+            printf("%s\n",tiles);
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles2[i]);
 			}
