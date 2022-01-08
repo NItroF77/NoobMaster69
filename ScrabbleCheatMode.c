@@ -354,8 +354,19 @@ void InputTiles()
 			fflush(stdin);
 			gets(temp);
 			Position=temp[0];
-			PosX=temp[2]-'0';
-			PosY=temp[4]-'0';
+			if(temp[3]!=','){
+				PosX=(temp[2]-'0')*10+(temp[3]-'0');
+				if(temp[6]!=','){
+					PosY=(temp[5]-'0')*10+(temp[6]-'0');
+				}
+				else{
+					PosY=(temp[5]-'0');
+				}
+			}
+			else{
+				PosX=temp[2]-'0';
+				PosY=temp[4]-'0';
+			}
 			CheckCommand(temp);
 			if((SaveG(temp))==1){
 				goto menu;
