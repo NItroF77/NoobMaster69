@@ -25,6 +25,7 @@ void Set_tiles();
 void scramble();
 int countLengthH(char word[]);
 void SetHTiles();
+void FindPos(char temp[],int *x,int *y);
 void CheckCommand(char command[]);
 int SaveG(char command[]);
 int CheckHoV(char letter);
@@ -342,8 +343,8 @@ void InputTiles()
 		scramble(ctiles1,countLengthH(ctiles1));
 	}
 	menu :
-		printf("%s\n",tiles);
 			strcpy(ctiles2,ctiles1);
+			printf("%s",tiles);
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles2[i]);
 			}
@@ -354,44 +355,7 @@ void InputTiles()
 			fflush(stdin);
 			gets(temp);
 			Position=temp[0];
-			if(temp[4]==','){
-				tempx1=((char)temp[2])-'0';
-				tempx2=((char)temp[3])-'0';
-				if(temp[6]!='\0'){
-					tempy1=((char)temp[5])-'0';
-					tempy2=((char)temp[6])-'0';
-				}
-				else{
-					tempy1=((char)temp[5])-'0';
-					tempy2=-1;
-				}
-			}
-			else{
-				tempx1=((char)temp[2])-'0';
-				tempx2=-1;
-				if(temp[5]!='\0'){
-					tempy1=((char)temp[4])-'0';
-					tempy2=((char)temp[5])-'0';
-				}
-				else{
-					tempy1=((char)temp[4])-'0';
-					tempy2=-1;
-				}
-				
-				
-			}
-			if(tempx2==-1){
-				PosX=tempx1;
-			}
-			else{
-				PosX=tempx1*10+tempx2;
-			}
-			if(tempy2==-1){
-				PosY=tempy1;
-			}
-			else{
-				PosY=tempy1*10+tempy2;
-			}
+			FindPos(temp,&PosX,&PosY);
 			CheckCommand(temp);
 			if((SaveG(temp))==1){
 				goto menu;
@@ -526,6 +490,46 @@ int SetUpperCase(char letter)
 	}
 	return letter;
 }
+void FindPos(char temp[],int *x,int *y)
+{
+	int tempx1,tempx2,tempy1,tempy2;
+			if(temp[4]==','){
+				tempx1=((char)temp[2])-'0';
+				tempx2=((char)temp[3])-'0';
+				if(temp[6]!='\0'){
+					tempy1=((char)temp[5])-'0';
+					tempy2=((char)temp[6])-'0';
+				}
+				else{
+					tempy1=((char)temp[5])-'0';
+					tempy2=-1;
+				}
+			}
+			else{
+				tempx1=((char)temp[2])-'0';
+				tempx2=-1;
+				if(temp[5]!='\0'){
+					tempy1=((char)temp[4])-'0';
+					tempy2=((char)temp[5])-'0';
+				}
+				else{
+					tempy1=((char)temp[4])-'0';
+					tempy2=-1;
+				}
+			}
+			if(tempx2==-1){
+				*x=tempx1;
+			}
+			else{
+				*x=tempx1*10+tempx2;
+			}
+			if(tempy2==-1){
+				*y=tempy1;
+			}
+			else{
+				*y=tempy1*10+tempy2;
+			}
+}
 int CheckHoV(char letter)
 {
 	if(letter=='V' || letter=='H'){
@@ -588,7 +592,6 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 				check2=1;
 			}
 		else{
-			printf("(%c,%c)\n",word[i],dat.BoardM[y][x]);
 			printf("your word positioning overlap with other\n");
 			getch();
 		}
