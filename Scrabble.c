@@ -705,7 +705,7 @@ void end_game()
 		printf("Draw with score %d\n",p.scr[1]);
 	}
 	InputScore();
-	printf("Want to play Again?\n");
+	printf("Want to play Again? (Y/N)\n");
 	scanf("%c",&cnfrm);
 	if(cnfrm=='Y' || cnfrm=='y'){
 		ResetGame();
