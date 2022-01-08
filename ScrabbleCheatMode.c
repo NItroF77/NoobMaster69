@@ -343,7 +343,7 @@ void InputTiles()
 				strcpy(ctiles,tiles);
 				scramble(ctiles,countLengthH(ctiles));
 			}
-			printf("%s\n",tiles);
+            printf("%s\n",tiles);
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles[i]);
 			}
@@ -537,30 +537,32 @@ void CheckCommand(char command[])
 }
 int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 {
- 	int i,j,check;
+ 	int i,j,check1,check2;
  	for(i=0;word[i]!='\0';i++){
- 		check=0;
- 		if(dir=='V'){
- 			y+=i;
-		}
-		else if(dir=='H'){
-			x+=i;
-		} 
+ 		check1=0;
+ 		check2=1;
  		for(j=0;compare[j]!='\0';j++){
  			if(word[i]==compare[j] || word[i]==dat.BoardM[y][x]){
  				compare[j]='*';
- 				check=1;
+ 				check1=1;
  				break;
 			}
-			else if(word[i]!=dat.BoardM[y][x] && dat.BoardM[y][x]!='\0'){
+			if(word[i]!=dat.BoardM[y][x] && dat.BoardM[y][x]!='\0'){
+				check2=0;
 				printf("your word positioning overlap with other\n");
 				getch();
 				break;
 			}
 		}
-		if(check==0){
+		if(check1==0 || check2==0){
 			printf("incorrect letter's input\n");
 			return 0;
+		}
+		if(dir=='V'){
+ 			y+=i;
+		}
+		else if(dir=='H'){
+			x+=i;
 		}
 	 }
 	 return 1;
