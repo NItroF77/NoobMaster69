@@ -342,8 +342,8 @@ void InputTiles()
 		scramble(ctiles1,countLengthH(ctiles1));
 	}
 	menu :
+		printf("%s\n",tiles);
 			strcpy(ctiles2,ctiles1);
-			printf("%s",tiles);
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles2[i]);
 			}
@@ -548,7 +548,7 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
  				break;
 			}
 		}
-		if(word[i]==dat.BoardM[y][x] || dat.BoardM[y][x]!='\0'){
+		if(word[i]==dat.BoardM[y][x] || dat.BoardM[y][x]=='\0'){
 				check2=1;
 			}
 		else{
