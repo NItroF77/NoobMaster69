@@ -539,6 +539,7 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 {
  	int i,j,check1,check2;
  	for(i=0;word[i]!='\0';i++){
+ 		printf("titik (%d,%d)\n",y,x);
  		check1=0;
  		check2=0;
  		for(j=0;compare[j]!='\0';j++){
