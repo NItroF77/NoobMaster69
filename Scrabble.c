@@ -662,12 +662,12 @@ int FindWord(char *search_for_string,int size_s)
 int Check_Pos(char Position,int LocX,int LocY,int length)
 {
 	if(Position=='H'){
-		if(LocX+length<15){
+		if(LocX+length<=15){
 			return 1;
 		}
 	}
 	else if(Position=='V'){
-		if(LocY+length<15){
+		if(LocY+length<=15){
 			return 1;
 		}
 	}
