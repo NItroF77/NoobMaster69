@@ -534,7 +534,7 @@ void CheckCommand(char command[])
 			end_game();
 		}
 }
-int (char compare[],char word[],int size_s, char dir, int x, int y)
+int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 {
  	int i,j,check1,check2;
  	for(i=0;word[i]!='\0';i++){
