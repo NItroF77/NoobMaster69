@@ -99,8 +99,8 @@ void ReadSavedData()
 		MainMenu();
 	}
 	fscanf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",&dat.Diffiticulty,&tcount,&turn,&time_limit, &M,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
-	for(i=0;i<15;i++){
-		for(j=0;j<15;j++){
+	for(i=0;i<M;i++){
+		for(j=0;j<M;j++){
 			fscanf(ptr_to_file,"%c ",&dat.BoardM[i][j]);
 		}
 	}
@@ -108,7 +108,7 @@ void ReadSavedData()
    	fclose(ptr_to_file);
    	getch();
    	system("cls");
-   	if(dat.Diffiticulty==2 || dat.Diffiticulty==2){
+   	if(dat.Diffiticulty==2 || dat.Diffiticulty==3){
    		Initiate_boardH();
 	   }
 	else if (dat.Diffiticulty==1){
@@ -128,8 +128,8 @@ void SaveGame()
 		ptr_to_file=fopen("savedat.txt","w+");
 	}
 	fprintf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,tcount,cturn,time_limit, M, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
-	for(i=0;i<15;i++){
-		for(j=0;j<15;j++){
+	for(i=0;i<M;i++){
+		for(j=0;j<M;j++){
 			fprintf(ptr_to_file,"%c ",dat.BoardM[i][j]);
 		}
 		fprintf(ptr_to_file,"\n");
@@ -343,7 +343,7 @@ void InputTiles()
 	}
 	menu :
 			strcpy(ctiles2,ctiles1);
-            printf("%s\n",tiles);
+			printf("%s",tiles);
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles2[i]);
 			}

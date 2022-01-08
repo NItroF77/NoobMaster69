@@ -108,7 +108,7 @@ void ReadSavedData()
    	fclose(ptr_to_file);
    	getch();
    	system("cls");
-   	if(dat.Diffiticulty==2 || dat.Diffiticulty==2){
+   	if(dat.Diffiticulty==2 || dat.Diffiticulty==3){
    		Initiate_boardH();
 	   }
 	else if (dat.Diffiticulty==1){
