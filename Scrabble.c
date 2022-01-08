@@ -21,10 +21,15 @@ void Initiate_boardC();
 void Initiate_boardH();
 void show_table();
 void InputTiles();
+void Set_tiles();
+void scramble();
+int countLengthH(char word[]);
+void SetHTiles();
 void CheckCommand(char command[]);
 int SaveG(char command[]);
 int CheckHoV(char letter);
 int SetUpperCase(char letter);
+int countLength(char word[]);
 int starttime();
 int endtime();
 int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y);
@@ -56,6 +61,7 @@ Players p;
 Dat dat;
 int turn=1;
 FILE *ptr_to_file;
+char tiles[8];
 //modular-modular code
 void MainMenu(){
  char empty=' ';
@@ -314,7 +320,7 @@ void InputTiles()
 	double time_passed;
 	char word[1024];
 	char temp[7];
-	char tiles[7];char ctiles[7];
+	char ctiles[8];
 	if(turn==0){
 		turn=1;
 	}
@@ -322,16 +328,25 @@ void InputTiles()
 		turn=0;
 	}
 	printf("%s's Turn\n",p.usr[turn]);
-	srand(time(0));
-		for(i=0;i<7;i++){
-		tiles[i]="AAAAAAAAAABBCCDDDDEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLLMMNNNNNNOOOOOOOPPQRRRRRRSSSSTTTTTTUUUUVVWWXYYZ"[rand() % 97];
+	if(dat.Diffiticulty==1 || dat.Diffiticulty==2){
+		Set_tiles();
+	}
+	else{
+		SetHTiles();
 	}
 	menu :
 			countL=0;
-			for(i=0;i<7;i++){
-				printf("%c ",tiles[i]);
+			if(dat.Diffiticulty==1 || dat.Diffiticulty==2){
+				strcpy(ctiles,tiles);
 			}
-			strcpy(ctiles,tiles);
+			else{
+				strcpy(ctiles,tiles);
+				scramble(ctiles,countLengthH(ctiles));
+			}
+			
+			for(i=0;i<7;i++){
+				printf("%c ",ctiles[i]);
+			}
 			printf("\n");
 			printf("Vertical (V) or Horizontal (H) and the initial point with format (column,row), ex: H,8,8 or h,8,8\n");
 			current_time=starttime();
@@ -361,9 +376,7 @@ void InputTiles()
 			fflush(stdin);
 			printf("Please input a word\n");
 			gets(word);
-			for(i=0;word[i]!='\0';i++){
-				countL++;
-			}
+			countL=countLength(word);
 			for(i=0;word[i]!='\0';i++){
 				word[i]=SetUpperCase(word[i]);
 			}
@@ -406,6 +419,70 @@ void InputTiles()
 				}
 	system("cls");
 }
+void Set_tiles(){
+	int i;
+	srand(time(0));
+		for(i=0;i<7;i++){
+		tiles[i]="AAAAAAAAAABBCCDDDDEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLLMMNNNNNNOOOOOOOPPQRRRRRRSSSSTTTTTTUUUUVVWWXYYZ"[rand() % 97];
+	}
+}
+void scramble(char *ptr, int length)
+{
+    int i = 0;
+
+    while(i < length)
+    {
+        int c1 = (rand() % (length));
+        int c2 = (rand() % (length));
+
+        if(c1 != c2)
+        {
+            ptr[c1] = ptr[c1] ^ ptr[c2];
+            ptr[c2] = ptr[c1] ^ ptr[c2];
+            ptr[c1] = ptr[c1] ^ ptr[c2];
+
+            i++;
+        }
+    }
+}
+int countLengthH(char word[])
+{
+	int i,count=0;
+	for(i=0;word[i]!='\n';i++){
+		count++;
+	}
+	return count;
+}
+void SetHTiles()
+{
+    int i,size_s,cek=0,randomN,count=-1;
+    char letter[2];
+    char word[1024];
+    menu :
+    srand(time(0));
+    letter[0]="ABCDEFGHIJKLMNOPQRSTUVWXYZ"[rand() % 26];
+    letter[1]="AIUEO"[rand() % 5];
+    randomN=rand() % 3;
+    ptr_to_file = fopen("words.txt", "r");
+    while (fgets(word, sizeof(word), ptr_to_file) != NULL)
+    {
+        if (word[0] == letter[0] && word[1]==letter[1])
+        {
+        	strcpy(tiles,word);
+        	size_s=countLengthH(tiles);
+            if(size_s==7){
+            	count++;
+            	if(count==randomN){
+				cek=1;
+            	fclose(ptr_to_file);
+				}
+        	}
+   		}
+	}
+	if(cek==0){
+		goto menu;
+	}
+}
 int SetUpperCase(char letter)
 {
 	if(letter>90){
@@ -419,6 +496,14 @@ int CheckHoV(char letter)
 		return 1;
 	}
 	return 0;
+}
+int countLength(char word[])
+{
+	int i,count=0;
+	for(i=0;word[i]!='\0';i++){
+		count++;
+	}
+	return count;
 }
 int SaveG(char command[])
 {
@@ -497,30 +582,40 @@ int FindWord(char *search_for_string,int size_s)
     int i;
     char word[1024];
     char last_case[]="ZZZS";
-    if(strstr(last_case,search_for_string)!=NULL){
-    	return 1;
+    if(dat.Diffiticulty==3){
+    	if((strstr(tiles,search_for_string))!=NULL){
+    		return 1;
+		}
+		else{
+			return 0;
+		}
 	}
-    ptr_to_file = fopen("words.txt", "r");
-    while (fgets(word, sizeof(word), ptr_to_file) != NULL)
-    {
-        if (strstr(word, search_for_string) != NULL)
-        {
-            if(size_s>7){
-            	fclose(ptr_to_file);
-                return 2;
-            }
-            else if(size_s==7 || size_s<3){
-            	fclose(ptr_to_file);
-                return 1;
-            }
-            else if(strlen(word)==size_s+1){
-            	fclose(ptr_to_file);
-                return 1;
-            }
-        }
-    }
-    fclose(ptr_to_file);
-    return 0;
+    else{
+    	if(strstr(last_case,search_for_string)!=NULL){
+    		return 1;
+		}
+    	ptr_to_file = fopen("words.txt", "r");
+    	while (fgets(word, sizeof(word), ptr_to_file) != NULL)
+    	{
+        	if (strstr(word, search_for_string) != NULL)
+        	{
+            	if(size_s>7){
+            		fclose(ptr_to_file);
+                	return 2;
+            	}
+            	else if(size_s==7 || size_s<3){
+            		fclose(ptr_to_file);
+                	return 1;
+            	}
+            	else if(strlen(word)==size_s+1){
+            		fclose(ptr_to_file);
+                	return 1;
+            	}
+        	}
+    	}
+    	fclose(ptr_to_file);
+    	return 0;
+	}
 }
 int Check_Pos(char Position,int LocX,int LocY,int length)
 {
