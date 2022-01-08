@@ -314,7 +314,7 @@ void show_board(){
 void InputTiles()
 {	
 	char cnfrm,Position;
-	int i,PosX,PosY,countL;
+	int i,PosX,PosY,countL,tempx1,tempx2,tempy1,tempy2;
 	int PosWord[7][2];
 	int current_time;
 	double time_passed;
@@ -354,18 +354,43 @@ void InputTiles()
 			fflush(stdin);
 			gets(temp);
 			Position=temp[0];
-			if(temp[3]!=','){
-				PosX=(temp[2]-'0')*10+(temp[3]-'0');
-				if(temp[6]!=','){
-					PosY=(temp[5]-'0')*10+(temp[6]-'0');
+			if(temp[4]==','){
+				tempx1=((char)temp[2])-'0';
+				tempx2=((char)temp[3])-'0';
+				if(temp[6]!='\0'){
+					tempy1=((char)temp[5])-'0';
+					tempy2=((char)temp[6])-'0';
 				}
 				else{
-					PosY=(temp[5]-'0');
+					tempy1=((char)temp[5])-'0';
+					tempy2=-1;
 				}
 			}
 			else{
-				PosX=temp[2]-'0';
-				PosY=temp[4]-'0';
+				tempx1=((char)temp[2])-'0';
+				tempx2=-1;
+				if(temp[5]!='\0'){
+					tempy1=((char)temp[4])-'0';
+					tempy2=((char)temp[5])-'0';
+				}
+				else{
+					tempy1=((char)temp[4])-'0';
+					tempy2=-1;
+				}
+				
+				
+			}
+			if(tempx2==-1){
+				PosX=tempx1;
+			}
+			else{
+				PosX=tempx1*10+tempx2;
+			}
+			if(tempy2==-1){
+				PosY=tempy1;
+			}
+			else{
+				PosY=tempy1*10+tempy2;
 			}
 			CheckCommand(temp);
 			if((SaveG(temp))==1){
@@ -550,7 +575,6 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 {
  	int i,j,check1,check2;
  	for(i=0;word[i]!='\0';i++){
- 		printf("titik (%d,%d)\n",y,x);
  		check1=0;
  		check2=0;
  		for(j=0;compare[j]!='\0';j++){
@@ -573,10 +597,10 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 			return 0;
 		}
 		if(dir=='V'){
- 			y+=i;
+ 			y++;
 		}
 		else if(dir=='H'){
-			x+=i;
+			x++;
 		}
 	 }
 	 return 1;

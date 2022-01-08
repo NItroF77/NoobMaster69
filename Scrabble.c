@@ -99,8 +99,8 @@ void ReadSavedData()
 		MainMenu();
 	}
 	fscanf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",&dat.Diffiticulty,&tcount,&turn,&time_limit, &M,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
-	for(i=0;i<15;i++){
-		for(j=0;j<15;j++){
+	for(i=0;i<M;i++){
+		for(j=0;j<M;j++){
 			fscanf(ptr_to_file,"%c ",&dat.BoardM[i][j]);
 		}
 	}
@@ -128,8 +128,8 @@ void SaveGame()
 		ptr_to_file=fopen("savedat.txt","w+");
 	}
 	fprintf(ptr_to_file,"%d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,tcount,cturn,time_limit, M, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
-	for(i=0;i<15;i++){
-		for(j=0;j<15;j++){
+	for(i=0;i<M;i++){
+		for(j=0;j<M;j++){
 			fprintf(ptr_to_file,"%c ",dat.BoardM[i][j]);
 		}
 		fprintf(ptr_to_file,"\n");
@@ -314,7 +314,7 @@ void show_board(){
 void InputTiles()
 {	
 	char cnfrm,Position;
-	int i,PosX,PosY,countL;
+	int i,PosX,PosY,countL,tempx1,tempx2,tempy1,tempy2;
 	int PosWord[7][2];
 	int current_time;
 	double time_passed;
@@ -353,8 +353,44 @@ void InputTiles()
 			fflush(stdin);
 			gets(temp);
 			Position=temp[0];
-			PosX=temp[2]-'0';
-			PosY=temp[4]-'0';
+			if(temp[4]==','){
+				tempx1=((char)temp[2])-'0';
+				tempx2=((char)temp[3])-'0';
+				if(temp[6]!='\0'){
+					tempy1=((char)temp[5])-'0';
+					tempy2=((char)temp[6])-'0';
+				}
+				else{
+					tempy1=((char)temp[5])-'0';
+					tempy2=-1;
+				}
+			}
+			else{
+				tempx1=((char)temp[2])-'0';
+				tempx2=-1;
+				if(temp[5]!='\0'){
+					tempy1=((char)temp[4])-'0';
+					tempy2=((char)temp[5])-'0';
+				}
+				else{
+					tempy1=((char)temp[4])-'0';
+					tempy2=-1;
+				}
+				
+				
+			}
+			if(tempx2==-1){
+				PosX=tempx1;
+			}
+			else{
+				PosX=tempx1*10+tempx2;
+			}
+			if(tempy2==-1){
+				PosY=tempy1;
+			}
+			else{
+				PosY=tempy1*10+tempy2;
+			}
 			CheckCommand(temp);
 			if((SaveG(temp))==1){
 				goto menu;
@@ -547,7 +583,7 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
  				break;
 			}
 		}
-		if(word[i]==dat.BoardM[y][x] || dat.BoardM[y][x]!='\0'){
+		if(word[i]==dat.BoardM[y][x] || dat.BoardM[y][x]=='\0'){
 				check2=1;
 			}
 		else{
@@ -559,10 +595,10 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 			return 0;
 		}
 		if(dir=='V'){
- 			y+=i;
+ 			y++;
 		}
 		else if(dir=='H'){
-			x+=i;
+			x++;
 		}
 	 }
 	 return 1;
