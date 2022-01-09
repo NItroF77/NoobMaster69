@@ -26,7 +26,7 @@ void scramble();
 int countLengthH(char word[]);
 void SetHTiles();
 void FindPos(char temp[],int *x,int *y);
-void CheckCommand(char command[]);
+int CheckCommand(char command[]);
 int SaveG(char command[]);
 int CheckHoV(char letter);
 int SetUpperCase(char letter);
@@ -43,6 +43,7 @@ int Check_MultiW(int temp_score,char word[],int Location[][2]);
 void end_game();
 void InputScore();
 void ResetGame();
+void CheckCheat();
 // user defined data
 typedef struct Player_Data{
 	char usr[2][30];
@@ -58,9 +59,11 @@ typedef struct Game_Data{
 int tcount=0;
 int M;
 int time_limit;
+int turn=1;
+int cht=0;
 Players p;
 Dat dat;
-int turn=1;
+
 FILE *ptr_to_file;
 char tiles[8];
 //modular-modular code
@@ -344,6 +347,7 @@ void InputTiles()
 	}
 	menu :
 			strcpy(ctiles2,ctiles1);
+			CheckCheat();
 			for(i=0;i<7;i++){
 				printf("%c ",ctiles2[i]);
 			}
@@ -355,10 +359,8 @@ void InputTiles()
 			gets(temp);
 			Position=temp[0];
 			FindPos(temp,&PosX,&PosY);
-			CheckCommand(temp);
-			if((SaveG(temp))==1){
-				goto menu;
-			}
+			if((CheckCommand(temp))==1){goto end;}
+			if((SaveG(temp))==1){goto menu;}
 			current_time=endtime()-current_time;
 			time_passed=((double)current_time)/CLOCKS_PER_SEC;
 			Position=SetUpperCase(Position);
@@ -416,6 +418,7 @@ void InputTiles()
 				printf("word that you input failed to be placed\n");
 				goto menu;
 				}
+	end :
 	system("cls");
 }
 void Set_tiles(){
@@ -423,6 +426,12 @@ void Set_tiles(){
 	srand(time(0));
 		for(i=0;i<7;i++){
 		tiles[i]="AAAAAAAAAABBCCDDDDEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLLMMNNNNNNOOOOOOOPPQRRRRRRSSSSTTTTTTUUUUVVWWXYYZ"[rand() % 97];
+	}
+}
+void CheckCheat()
+{
+	if(cht==1 && dat.Diffiticulty==3){
+		printf("%s\n",tiles);
 	}
 }
 void scramble(char *ptr, int length)
@@ -553,25 +562,31 @@ int SaveG(char command[])
 	}
 	return 0;
 }
-void CheckCommand(char command[])
+int CheckCommand(char command[])
 {
 	char pass[]="!pass";
 	char forfeit[]="!forfeit";
 	char endG[]="!endgame";
+	char cheat[]="!debug";
 	
 		if((strstr(command,forfeit))!=NULL){
 			p.scr[turn]=0;
 			tcount+=100;
 			end_game();
+			return 1;
 		}
 		else if((strstr(command,pass))!=NULL){
 			getch();
-			system("cls");
-			show_board();
+			return 1;
 		}
 		else if((strstr(command,endG))!=NULL){
 			tcount+=100;
 			end_game();
+			return 1;
+		}
+		else if((strstr(command,cheat))!=NULL){
+			if(cht==0){cht=1;}else{cht=0;}
+			return 1;
 		}
 }
 int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
@@ -662,12 +677,12 @@ int FindWord(char *search_for_string,int size_s)
 int Check_Pos(char Position,int LocX,int LocY,int length)
 {
 	if(Position=='H'){
-		if(LocX+length<=15){
+		if(LocX+length<=M){
 			return 1;
 		}
 	}
 	else if(Position=='V'){
-		if(LocY+length<=15){
+		if(LocY+length<=M){
 			return 1;
 		}
 	}
@@ -752,16 +767,19 @@ void end_game()
 	if(cnfrm=='Y' || cnfrm=='y'){
 		ResetGame();
 	}
-	system("cls");
+	else{
+			system("cls");
 	printf("%55c%s",empty,"Good Bye\n");
 	getch();
 	exit(1);
+	}
 }
 void ResetGame()
 {
 	int i,j;
 	p.scr[0]=0;p.scr[1]=0;
 	tcount=0;
+	turn=1;
 	for(i=0;i<M;i++){
 		for(j=0;j<M;j++){
 			dat.BoardM[i][j]='\0';
