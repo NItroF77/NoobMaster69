@@ -146,7 +146,7 @@ void Game_Mode()
 {	
 	int pilihan;
 	char empty=' ';
-	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
+	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2. Player Vs bot\n",empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : insert_data_player();break;
@@ -158,12 +158,12 @@ void HowToPlay()
 {
 	int i;
 	char empty=' ';
-	printf("\n%46.c%c",empty,201);
- 	for(i=0;i<16;i++){printf("%c",205);}
+	printf("%46.c%c",empty,201);
+ 	for(i=0;i<17;i++){printf("%c",205);}
 	printf("%c",187);
-	printf("\n%47.c%c%2.cHOW TO PLAY%3.c%c",186,empty,empty,186);
+	printf("\n%46.c%c%3.cHOW TO PLAY%4.c%c",empty,186,empty,186);
 	printf("\n%46.c%c",empty,200);
- 	for(i=0;i<16;i++){printf("%c",205);}printf("%c",188);
+ 	for(i=0;i<17;i++){printf("%c",205);}printf("%c",188);
  	printf("\n\nPada Main Menu:");
 	printf("\n1. Pilih Game Mode\n   Pilih mode Player Vs Player jika ingin melawan player lain atau pilih mode Player Vs Bot jika ingin\n   melawan bot (Komputer)");
 	printf("\n2. Pilih tingkat kesulitan\n   Memilih tingkat kesulitan diantara Casual(Short Mode), Casual, dan Hard");
@@ -171,10 +171,21 @@ void HowToPlay()
 	printf("1. Tiap pemain akan diberikan 7 buah huruf yang harus dirangkai menjadi sebuah kata\n");
 	printf("2. Pemain harus menentukan format Vertikal (V) atau Horizontal (H) dan titik awal dengan format (kolom,baris).\n   Contoh: H,8,8 atau h,8,8\n");
 	printf("3. Apabila kata yang dimasukkan itu benar maka giliran akan berganti. Namun bila kata yang dimasukkan itu salah,\n   maka player masih memiliki kesempatan untuk"); 
-	printf("memasukkan kata lagi sebelum waktu yang dimiliki player habis.\n   Dan jika habis, maka giliran akan berganti.\n");
+	printf("memasukkan kata lagi sebelum waktu yang dimiliki player habis.\n   Dan jika habis, maka giliran akan berganti\n");
 	printf("4. Pemain harus mengumpulkan skor sebanyak-banyaknya dengan membuat kata sepanjang mungkin, menggunakan huruf\n   yang memiliki skor tinggi, dan memanfaatkan blok yang dapat menggandakan skor\n");
 	printf("5. Game akan berakhir apabila 100 huruf sudah terpakai\n6. Pemain yang memiliki skor paling banyak akan menjadi pemenangnya");
-	
+	printf("\n\n%c",201);
+ 	for(i=0;i<111;i++){printf("%c",205);}
+	printf("%c",187);
+	printf("\n%c%49.cCOMMAND LIST%50.c%c",186,empty,empty,186);
+ 	printf("\n%c%111.c%c\n%c%3.c!save = Menyimpan data game%3.c!pass = Mengganti giliran%3.c!forfeit = Menyerah%3.c!endgame = Mengakhiri game%2.c%c",186,empty,186,186,empty,empty,empty,empty,empty,186);
+ 	printf("\n%c",200);
+ 	for(i=0;i<111;i++){printf("%c",205);}
+	printf("%c",188);
+	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");
+	getch();
+	system("cls");
+	MainMenu();
 }
 void SeeHighScore()
 {
@@ -188,11 +199,13 @@ void SeeHighScore()
 		}
 		
 	}
+	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");getch();system("cls");MainMenu();
 }
 void Credit()
 {
 	char empty=' ';
 	printf("%40.c Credit By : \n %40.cFariz Muhammad Ibnu \n %40.cHanri Fajar \n %40.cRaihan Fuad S.",empty,empty,empty,empty);
+	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");getch();system("cls");MainMenu();
 }
 void SetDiff(){
 	int choose;
@@ -750,6 +763,7 @@ int Check_MultiW(int temp_score,char word[],int Location[][2])
 }
 void end_game()
 {
+	system("cls");
 	char empty=' ';
 	char cnfrm;
 	if(p.scr[0]>p.scr[1]){
@@ -762,9 +776,11 @@ void end_game()
 		printf("Draw with score %d\n",p.scr[1]);
 	}
 	InputScore();
+	getch();
 	printf("Want to play Again? (Y/N)\n");
 	scanf("%c",&cnfrm);
 	if(cnfrm=='Y' || cnfrm=='y'){
+		system("cls");
 		ResetGame();
 	}
 	else{
