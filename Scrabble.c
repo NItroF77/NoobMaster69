@@ -68,8 +68,8 @@ FILE *ptr_to_file;
 char tiles[8];
 //modular-modular code
 void MainMenu(){
- char empty=' ';
- int i,pilihan;
+	char empty=' ';
+	int i,pilihan;
  	printf("%40.c%c",empty,201);
  	for(i=0;i<29;i++){printf("%c",205);}
 	printf("%c",187);
@@ -93,8 +93,7 @@ void MainMenu(){
 		default :system("cls");MainMenu();break;
 	}
 }
-void ReadSavedData()
-{
+void ReadSavedData(){
 	int i,j;
 	if((ptr_to_file=fopen("savedat.txt","r"))==NULL){
 		printf("Failed load data\n");
@@ -119,8 +118,7 @@ void ReadSavedData()
    		Initiate_boardC();
 	   }
 }
-void SaveGame()
-{
+void SaveGame(){
 	int i,j,cturn;
 	if(turn==0){
 		cturn=1;
@@ -142,8 +140,7 @@ void SaveGame()
    	fclose(ptr_to_file);
    	getch();
 }
-void Game_Mode()
-{	
+void Game_Mode(){	
 	int pilihan;
 	char empty=' ';
 	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
@@ -154,8 +151,7 @@ void Game_Mode()
 		default : printf("tidak ada pilihan angka tersebut");getch();system("cls");Game_Mode();break;
 	}
 }
-void HowToPlay()
-{
+void HowToPlay(){
 	int i;
 	char empty=' ';
 	printf("\n%46.c%c",empty,201);
@@ -174,25 +170,34 @@ void HowToPlay()
 	printf("memasukkan kata lagi sebelum waktu yang dimiliki player habis.\n   Dan jika habis, maka giliran akan berganti.\n");
 	printf("4. Pemain harus mengumpulkan skor sebanyak-banyaknya dengan membuat kata sepanjang mungkin, menggunakan huruf\n   yang memiliki skor tinggi, dan memanfaatkan blok yang dapat menggandakan skor\n");
 	printf("5. Game akan berakhir apabila 100 huruf sudah terpakai\n6. Pemain yang memiliki skor paling banyak akan menjadi pemenangnya");
-	
+	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");
+	getch();
+	system("cls");
+	MainMenu();
 }
-void SeeHighScore()
-{
+void SeeHighScore(){
 	int i,scr;
 	char user[30];
 	system("cls");
 	if((ptr_to_file=fopen("scorelist.txt","r"))!=NULL){
-		while(feof(ptr_to_file)==NULL){
-			fscanf(ptr_to_file,"%s %d",user,&scr);
+		while(!feof(ptr_to_file)){
+			fscanf(ptr_to_file,"%s %d\n",user,&scr);
 			printf("%s %d\n",user,scr);
 		}
 		
 	}
+	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");
+	getch();
+	system("cls");
+	MainMenu();
 }
-void Credit()
-{
+void Credit(){
 	char empty=' ';
 	printf("%40.c Credit By : \n %40.cFariz Muhammad Ibnu \n %40.cHanri Fajar \n %40.cRaihan Fuad S.",empty,empty,empty,empty);
+	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");
+	getch();
+	system("cls");
+	MainMenu();
 }
 void SetDiff(){
 	int choose;
@@ -562,8 +567,7 @@ int SaveG(char command[])
 	}
 	return 0;
 }
-int CheckCommand(char command[])
-{
+int CheckCommand(char command[]){
 	char pass[]="!pass";
 	char forfeit[]="!forfeit";
 	char endG[]="!endgame";
@@ -589,8 +593,7 @@ int CheckCommand(char command[])
 			return 1;
 		}
 }
-int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
-{
+int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y){
  	int i,j,check1,check2;
  	for(i=0;word[i]!='\0';i++){
  		check1=0;
@@ -622,9 +625,7 @@ int CheckTiles(char compare[],char word[],int size_s, char dir, int x, int y)
 	 }
 	 return 1;
 }
-
-int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY)
-{
+int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY){
 	if(FindWord(wordC,size_of_word)==1 && Check_Pos(Pos,LocX,LocY,size_of_word)){
 		return 1;
 	}
@@ -634,8 +635,7 @@ int PutWord(char wordC[], int size_of_word,char Pos,int LocX,int LocY)
 	}
 	return 0;
 }
-int FindWord(char *search_for_string,int size_s)
-{
+int FindWord(char *search_for_string,int size_s){
     int i;
     char word[1024];
     char last_case[]="ZZZS";
@@ -674,8 +674,7 @@ int FindWord(char *search_for_string,int size_s)
     	return 0;
 	}
 }
-int Check_Pos(char Position,int LocX,int LocY,int length)
-{
+int Check_Pos(char Position,int LocX,int LocY,int length){
 	if(Position=='H'){
 		if(LocX+length<=M){
 			return 1;
@@ -720,8 +719,7 @@ void add_score(char word[],int Location[][2]){
 	total_score=Check_MultiW(total_score,word,Location);
 	p.scr[turn]=p.scr[turn]+total_score;
 }
-int Check_MultiT(int score,int LocationX,int LocationY)
-{
+int Check_MultiT(int score,int LocationX,int LocationY){
 	if(dat.BoardS[LocationY][LocationX]==1 || dat.BoardS[LocationY][LocationX]==6 || dat.BoardS[LocationY][LocationX]==7){
 		return score*1;
 	}
@@ -757,7 +755,7 @@ void end_game(){
 	printf("The winner is %s with score %d\n",p.usr[1],p.scr[1]);
 	}
 	else{
-		printf("Draw with score %d\n",p.scr[1]^p.scr[0]);
+		printf("Draw with score %d\n",p.scr[0]);
 	}
 	InputScore();
 	printf("Want to play Again? (Y/N)\n");
