@@ -76,12 +76,12 @@ void MainMenu(){
 	for(i=0;i<8;i++){
 		printf("\n");printf("%40.c",empty);
 		if(i==1){printf("%c%8.cSelamat Datang%7.c%c",186,empty,empty,186);}
-		else if(i==2){printf("%c%7.cDI Game Scrabble%6.c%c",186,empty,empty,186);}
+		else if(i==2){printf("%c%7.cDi Game Scrabble%6.c%c",186,empty,empty,186);}
 		else if(i==6){printf("%c%7.cBy NoobMaster69%7.c%c",186,empty,empty,186);}
 		else{printf("%c%29.c%c",186,empty,186);}}
 	printf("\n%40.c%c",empty,200);
  	for(i=0;i<29;i++){printf("%c",205);}printf("%c",188);
-	printf("\n%50.cMain Menu :\n%50.c1.Continue Game \n%50.c2.New Game \n%50.c3.How to play \n%50.c4.HighScore \n%50.c5.Credit \n%50.c6.Exit\n",empty,empty,empty,empty,empty,empty,empty);
+	printf("\n%50.cMain Menu :\n%50.c1. Continue Game \n%50.c2. New Game \n%50.c3. How to play \n%50.c4. HighScore \n%50.c5. Credit \n%50.c6. Exit\n",empty,empty,empty,empty,empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : system("cls");ReadSavedData();break;
@@ -143,7 +143,7 @@ void SaveGame(){
 void Game_Mode(){	
 	int pilihan;
 	char empty=' ';
-	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
+	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2. Player Vs bot\n",empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : insert_data_player();break;
@@ -170,6 +170,14 @@ void HowToPlay(){
 	printf("memasukkan kata lagi sebelum waktu yang dimiliki player habis.\n   Dan jika habis, maka giliran akan berganti.\n");
 	printf("4. Pemain harus mengumpulkan skor sebanyak-banyaknya dengan membuat kata sepanjang mungkin, menggunakan huruf\n   yang memiliki skor tinggi, dan memanfaatkan blok yang dapat menggandakan skor\n");
 	printf("5. Game akan berakhir apabila 100 huruf sudah terpakai\n6. Pemain yang memiliki skor paling banyak akan menjadi pemenangnya");
+	printf("\n\n%c",201);
+ 	for(i=0;i<111;i++){printf("%c",205);}
+	printf("%c",187);
+	printf("\n%c%49.cCOMMAND LIST%50.c%c",186,empty,empty,186);
+ 	printf("\n%c%111.c%c\n%c%3.c!save = Menyimpan data game%3.c!pass = Mengganti giliran%3.c!forfeit = Menyerah%3.c!endgame = Mengakhiri game%2.c%c",186,empty,186,186,empty,empty,empty,empty,empty,186);
+ 	printf("\n%c",200);
+ 	for(i=0;i<111;i++){printf("%c",205);}
+	printf("%c",188);
 	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");
 	getch();
 	system("cls");
@@ -749,15 +757,16 @@ void end_game(){
 	char empty=' ';
 	char cnfrm;
 	if(p.scr[0]>p.scr[1]){
-	printf("The winner is %s with score %d\n",p.usr[0],p.scr[0]);
+	printf("\nThe winner is %s with score %d\n",p.usr[0],p.scr[0]);
 	}
 	else if(p.scr[0]<p.scr[1]){
-	printf("The winner is %s with score %d\n",p.usr[1],p.scr[1]);
+	printf("\nThe winner is %s with score %d\n",p.usr[1],p.scr[1]);
 	}
 	else{
-		printf("Draw with score %d\n",p.scr[0]);
+		printf("\nDraw with score %d\n",p.scr[0]);
 	}
 	InputScore();
+	getch();
 	printf("Want to play Again? (Y/N)\n");
 	scanf("%c",&cnfrm);
 	if(cnfrm=='Y' || cnfrm=='y'){
