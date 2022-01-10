@@ -20,6 +20,7 @@ void insert_data_player();
 void Initiate_boardC();
 void Initiate_boardH();
 void show_table();
+void ChangeTurn();
 void InputTiles();
 void Set_tiles();
 void scramble();
@@ -51,6 +52,8 @@ int BotCheckTiles(char Position,char word[]);
 int Check_Bot_Pos(char Position,int LocX,int LocY,int length);
 void end_game();
 void InputScore();
+void SortScore();
+void OverWriteScore(char name[][30],int score[],int diff[],int idx);
 void ResetGame();
 // user defined data
 typedef struct Player_Data{
@@ -88,12 +91,12 @@ void MainMenu(){
 	for(i=0;i<8;i++){
 		printf("\n");printf("%40.c",empty);
 		if(i==1){printf("%c%8.cSelamat Datang%7.c%c",186,empty,empty,186);}
-		else if(i==2){printf("%c%7.cDi Game Scrabble%6.c%c",186,empty,empty,186);}
+		else if(i==2){printf("%c%7.cDI Game Scrabble%6.c%c",186,empty,empty,186);}
 		else if(i==6){printf("%c%7.cBy NoobMaster69%7.c%c",186,empty,empty,186);}
 		else{printf("%c%29.c%c",186,empty,186);}}
 	printf("\n%40.c%c",empty,200);
  	for(i=0;i<29;i++){printf("%c",205);}printf("%c",188);
-	printf("\n%50.cMain Menu :\n%50.c1. Continue Game \n%50.c2. New Game \n%50.c3. How to play \n%50.c4. HighScore \n%50.c5. Credit \n%50.c6. Exit\n",empty,empty,empty,empty,empty,empty,empty);
+	printf("\n%50.cMain Menu :\n%50.c1.Continue Game \n%50.c2.New Game \n%50.c3.How to play \n%50.c4.HighScore \n%50.c5.Credit \n%50.c6.Exit\n",empty,empty,empty,empty,empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : system("cls");ReadSavedData();break;
@@ -155,7 +158,7 @@ void SaveGame(){
 void Game_Mode(){	
 	int pilihan;
 	char empty=' ';
-	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2. Player Vs bot\n",empty,empty,empty);
+	printf("%50.cPilih Game Mode : \n%50.c1. Player Vs Player \n%50.c2.Player Vs bot\n",empty,empty,empty);
 	scanf("%d",&pilihan);
 	switch(pilihan){
 		case 1 : dat.GameMode=1,insert_data_player();break;
@@ -182,27 +185,20 @@ void HowToPlay(){
 	printf("memasukkan kata lagi sebelum waktu yang dimiliki player habis.\n   Dan jika habis, maka giliran akan berganti.\n");
 	printf("4. Pemain harus mengumpulkan skor sebanyak-banyaknya dengan membuat kata sepanjang mungkin, menggunakan huruf\n   yang memiliki skor tinggi, dan memanfaatkan blok yang dapat menggandakan skor\n");
 	printf("5. Game akan berakhir apabila 100 huruf sudah terpakai\n6. Pemain yang memiliki skor paling banyak akan menjadi pemenangnya");
-	printf("\n\n%c",201);
- 	for(i=0;i<111;i++){printf("%c",205);}
-	printf("%c",187);
-	printf("\n%c%49.cCOMMAND LIST%50.c%c",186,empty,empty,186);
- 	printf("\n%c%111.c%c\n%c%3.c!save = Menyimpan data game%3.c!pass = Mengganti giliran%3.c!forfeit = Menyerah%3.c!endgame = Mengakhiri game%2.c%c",186,empty,186,186,empty,empty,empty,empty,empty,186);
- 	printf("\n%c",200);
- 	for(i=0;i<111;i++){printf("%c",205);}
-	printf("%c",188);
 	printf("\n\nTekan tombol apapun untuk kembali ke Main Menu..");
 	getch();
 	system("cls");
 	MainMenu();
 }
 void SeeHighScore(){
-	int i,scr;
+	int i,scr,diff;
 	char user[30];
+	SortScore();
 	system("cls");
 	if((ptr_to_file=fopen("scorelist.txt","r"))!=NULL){
 		while(!feof(ptr_to_file)){
-			fscanf(ptr_to_file,"%s %d\n",user,&scr);
-			printf("%s %d\n",user,scr);
+			fscanf(ptr_to_file,"%s %d %d\n",user,&diff,&scr);
+			printf("%s %d %d\n",user,diff,scr);
 		}
 		
 	}
@@ -349,6 +345,14 @@ void show_board(){
 	printf("%d letter left\n",100-tcount);
 	InputTiles();
 }
+void ChangeTurn(){
+	if(turn==0){
+		turn=1;
+	}
+	else if(turn==1){
+		turn=0;
+	}
+}
 void InputTiles(){	
 	char cnfrm,Position;
 	int i,PosX,PosY,countL,tempx1,tempx2,tempy1,tempy2;
@@ -357,13 +361,8 @@ void InputTiles(){
 	double time_passed;
 	char word[1024];
 	char temp[7];
+	ChangeTurn();
 	char ctiles1[8];char ctiles2[8];
-	if(turn==0){
-		turn=1;
-	}
-	else if(turn==1){
-		turn=0;
-	}
 	printf("%s's Turn\n",p.usr[turn]);
 	if(dat.Diffiticulty==1 || dat.Diffiticulty==2){Set_tiles();strcpy(ctiles1,tiles);}
 	else{SetHTiles();strcpy(ctiles1,tiles);
@@ -382,8 +381,7 @@ void InputTiles(){
 			gets(temp);
 			Position=temp[0];
 			FindPos(temp,&PosX,&PosY);
-			if((CheckCommand(temp))==1 && dat.GameMode==2){turn=1;goto end;}
-			else if((CheckCommand(temp))==1){goto end;}
+			if((CheckCommand(temp))==1){turn=1;goto end;}
 			if((SaveG(temp))==1){goto menu;}
 			Position=SetUpperCase(Position);
 			if(CheckHoV(Position)==0){
@@ -914,17 +912,16 @@ void end_game(){
 	char empty=' ';
 	char cnfrm;
 	if(p.scr[0]>p.scr[1]){
-	printf("\nThe winner is %s with score %d\n",p.usr[0],p.scr[0]);
+	printf("The winner is %s with score %d\n",p.usr[0],p.scr[0]);
 	}
 	else if(p.scr[0]<p.scr[1]){
-	printf("\nThe winner is %s with score %d\n",p.usr[1],p.scr[1]);
+	printf("The winner is %s with score %d\n",p.usr[1],p.scr[1]);
 	}
 	else{
-		printf("\nDraw with score %d\n",p.scr[0]);
+		printf("Draw with score %d\n",p.scr[0]);
 	}
 	getch();
 	InputScore();
-	getch();
 	printf("Want to play Again? (Y/N)\n");
 	fflush(stdin);
 	scanf("%c",&cnfrm);
@@ -950,8 +947,47 @@ void ResetGame(){
 	}
 }
 void InputScore(){
-	ptr_to_file=fopen("scorelist.txt","w");
-	fprintf(ptr_to_file,"%s %d \n%s %d",p.usr[0],p.scr[0],p.usr[1],p.scr[1]);
+	ptr_to_file=fopen("scorelist.txt","a+");
+	fprintf(ptr_to_file,"%s %d %d\n%s %d %d\n",p.usr[0],dat.Diffiticulty,p.scr[0],p.usr[1],dat.Diffiticulty,p.scr[1]);
+	fclose(ptr_to_file);
+}
+void SortScore(){
+	int idx=0,i,j;
+	int scr_t;
+	int diff_t;
+	char name_t[30];
+	int score[100];
+	char name[100][30];
+	int diff[100];
+	ptr_to_file=fopen("scorelist.txt","r");
+	while(!feof(ptr_to_file)){
+		fscanf(ptr_to_file,"%s %d %d\n",name[idx],&diff[idx],&score[idx]);
+		idx++;
+	}
+	for(j=0;j<idx;j++){
+		for(i=0;i<idx;i++){
+			if(score[i+1]>score[i]){
+				strcpy(name_t,name[i+1]);
+				scr_t=score[i+1];
+				diff_t=diff[i+1];
+				strcpy(name[i+1],name[i]);
+				score[i+1]=score[i];
+				diff[i+1]=diff[i];
+				strcpy(name[i],name_t);
+				score[i]=scr_t;
+				diff[i]=diff_t;
+			}
+		}
+	}
+	
+	OverWriteScore(name,score,diff,idx);
+}
+void OverWriteScore(char name[][30],int score[],int diff[],int idx){
+	int i;
+	ptr_to_file=fopen("scorelist.txt","w+");
+	for(i=0;i<=idx;i++){
+		fprintf(ptr_to_file,"%s %d %d\n",name[i],diff[i],score[i]);
+	}
 	fclose(ptr_to_file);
 }
 int starttime(){
