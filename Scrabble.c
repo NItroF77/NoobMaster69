@@ -72,7 +72,7 @@ typedef struct BotData{
 }Bot;
 //variabel global
 int tcount=0;
-int M;
+int board_size;
 int time_limit;
 int turn=1;
 int cht=0;
@@ -121,9 +121,9 @@ void ReadSavedData(){
 		system("cls");
 		MainMenu();
 	}
-	fscanf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",&dat.Diffiticulty,&dat.GameMode,&tcount,&turn,&time_limit, &M,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
-	for(i=0;i<M;i++){
-		for(j=0;j<M;j++){
+	fscanf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",&dat.Diffiticulty,&dat.GameMode,&tcount,&turn,&time_limit, &board_size,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
+	for(i=0;i<board_size;i++){
+		for(j=0;j<board_size;j++){
 			fscanf(ptr_to_file,"%c ",&dat.BoardM[i][j]);
 		}
 	}
@@ -153,9 +153,9 @@ void SaveGame(){
 	if((ptr_to_file=fopen("savedat.txt","w"))!=NULL){
 		ptr_to_file=fopen("savedat.txt","w+");
 	}
-	fprintf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,dat.GameMode,tcount,cturn,time_limit, M, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
-	for(i=0;i<M;i++){
-		for(j=0;j<M;j++){
+	fprintf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,dat.GameMode,tcount,cturn,time_limit, board_size, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
+	for(i=0;i<board_size;i++){
+		for(j=0;j<board_size;j++){
 			fprintf(ptr_to_file,"%c ",dat.BoardM[i][j]);
 		}
 		fprintf(ptr_to_file,"\n");
@@ -260,7 +260,7 @@ void Initiate_boardC(){
 			dat.BoardS[i][j]=boardscr[i][j];
 		}
 	}
-	M=10;
+	board_size=10;
 }
 void Initiate_boardH(){
 	//menginisiasi papan 15x15 untuk tingkat kesulitan casual dan hard.
@@ -287,7 +287,7 @@ void Initiate_boardH(){
 			dat.BoardS[i][j]=boardscr[i][j];
 		}
 	}
-	M=15;
+	board_size=15;
 }
 void insert_data_player(){
 	//modul yang mengatur informasi data nama setiap player, jika user memilih game mode Player Vs bot maka player 2 akan bernama GAROX.
@@ -320,7 +320,7 @@ void show_board(){
 	int i,j;
 	char empty=' ';
 	printf("%6.c1  ",empty);
-	for(i=1;i<M;i++){
+	for(i=1;i<board_size;i++){
 		if(i<9){
 			printf(" %d  ",i+1);
 		}
@@ -330,18 +330,18 @@ void show_board(){
 	}
 	printf("\n%4.c",empty);
 	printf("%c",201);
-	for(i=1;i<M+6;i++){
+	for(i=1;i<board_size+6;i++){
 		printf("%c%c%c",205,205,205);
 	}
 	printf("\n");
-	for(i=0;i<M;i++){
+	for(i=0;i<board_size;i++){
 		if(i<9){
 			printf(" %d  %c",i+1,186);
 		}
 		else{
 		printf(" %d %c",i+1,186);
 		}
-		for(j=0;j<M;j++){
+		for(j=0;j<board_size;j++){
 			if(dat.BoardM[i][j]=='\0'){
 				switch(dat.BoardS[i][j]){
 					case 1 : printf(" *  ");break;
@@ -413,7 +413,7 @@ void InputTiles(){
 				getch();
 				goto menu;
 			}
-			if(PosX>M || PosY>M){
+			if(PosX>board_size || PosY>board_size){
 				printf("Position Exceed board\n");
 				getch();
 				goto menu;
@@ -733,12 +733,12 @@ int FindWord(char *search_for_string,int size_s){
 int Check_Pos(char Position,int LocX,int LocY,int length){
 	//mengececk apakah posisi papan ditambah panjang kata melebihi papan atau tidak.
 	if(Position=='H'){ //ketika player menginput secara Horizontal.
-		if(LocX+length<=M){
+		if(LocX+length<=board_size){
 			return 1;
 		}
 	}
 	else if(Position=='V'){ //ketika player menginput secara Vertikal.
-		if(LocY+length<=M){
+		if(LocY+length<=board_size){
 			return 1;
 		}
 	}
@@ -887,12 +887,12 @@ void BotHard(){
 void fix_Bot_Pos(char Position,int LocX,int LocY,int length){
 	//memperbaiki posisi input bot jika melebihi atau kurang dari titik minimal dan maksimal input.
 	if(Position=='H'){ //jika komputer akan menginput secara Horizontal.
-		if(LocX+length>M){
+		if(LocX+length>board_size){
 			LocX-=length-1;
 		}
 	}
 	else if(Position=='V'){ //jika komputer akan menginput secara Vertical.
-		if(LocY+length>M){
+		if(LocY+length>board_size){
 			LocY-=length-1;
 		}
 	}
@@ -902,12 +902,12 @@ void fix_Bot_Pos(char Position,int LocX,int LocY,int length){
 int Check_Bot_Pos(char Position,int LocX,int LocY,int length){
 	//mengecek apakah titik menginput komputer ditambah panjang kata melebihi titik di papan atau tidak.
 	if(Position=='H'){
-		if(LocX+length<=M){
+		if(LocX+length<=board_size){
 			return 1;
 		}
 	}
 	else if(Position=='V'){
-		if(LocY+length<=M){
+		if(LocY+length<=board_size){
 			return 1;
 		}
 	}
@@ -999,8 +999,8 @@ void ResetGame(){
 	p.scr[0]=0;p.scr[1]=0;
 	tcount=0;
 	turn=1;
-	for(i=0;i<M;i++){
-		for(j=0;j<M;j++){
+	for(i=0;i<board_size;i++){
+		for(j=0;j<board_size;j++){
 			dat.BoardM[i][j]='\0';
 		}
 	}
