@@ -19,7 +19,7 @@ void SeeHighScore();
 void insert_data_player();
 void Initiate_boardC();
 void Initiate_boardH();
-void show_table();
+void show_board();
 void ChangeTurn();
 void InputTiles();
 void Set_tiles();
@@ -61,7 +61,7 @@ typedef struct Player_Data{
 	int scr[2];
 }Players;
 typedef struct Game_Data{
-	int Diffiticulty;
+	int Difficulty;
 	int GameMode;		//untuk game data mulai dari informasi kesulitan, gamemode, BoardS sebagai papan yang mengatur bonus poin di setiap bloknya
 	int BoardS[15][15];
 	char BoardM[15][15];
@@ -121,7 +121,7 @@ void ReadSavedData(){
 		system("cls");
 		MainMenu();
 	}
-	fscanf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",&dat.Diffiticulty,&dat.GameMode,&tcount,&turn,&time_limit, &board_size,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
+	fscanf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",&dat.Difficulty,&dat.GameMode,&tcount,&turn,&time_limit,&board_size,p.usr[0], &p.scr[0], p.usr[1], &p.scr[1]);
 	for(i=0;i<board_size;i++){
 		for(j=0;j<board_size;j++){
 			fscanf(ptr_to_file,"%c ",&dat.BoardM[i][j]);
@@ -131,10 +131,10 @@ void ReadSavedData(){
    	fclose(ptr_to_file);
    	getch();
    	system("cls");
-   	if(dat.Diffiticulty==2 || dat.Diffiticulty==3){
+   	if(dat.Difficulty==2 || dat.Difficulty==3){
    		Initiate_boardH();
 	   }
-	else if (dat.Diffiticulty==1){
+	else if (dat.Difficulty==1){
    		Initiate_boardC();
 	   }
 }
@@ -153,7 +153,7 @@ void SaveGame(){
 	if((ptr_to_file=fopen("savedat.txt","w"))!=NULL){
 		ptr_to_file=fopen("savedat.txt","w+");
 	}
-	fprintf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",dat.Diffiticulty,dat.GameMode,tcount,cturn,time_limit, board_size, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
+	fprintf(ptr_to_file,"%d %d %d %d %d %d %s %d %s %d\n",dat.Difficulty,dat.GameMode,tcount,cturn,time_limit, board_size, p.usr[0], p.scr[0], p.usr[1], p.scr[1]);
 	for(i=0;i<board_size;i++){
 		for(j=0;j<board_size;j++){
 			fprintf(ptr_to_file,"%c ",dat.BoardM[i][j]);
@@ -234,9 +234,9 @@ void SetDiff(){
 	printf("%45cPilih tingkat kesulitan \n%45c1. Casual (Short Mode) \n%45c2. Casual \n%45c3. Hard\n",empty,empty,empty,empty);
 	scanf("%d",&choose);
 	switch(choose){
-		case 1 : dat.Diffiticulty=1;time_limit=80;Initiate_boardC();break;
-		case 2 : dat.Diffiticulty=2;time_limit=80;Initiate_boardH();break;
-		case 3 : dat.Diffiticulty=3;time_limit=40;Initiate_boardH();break;
+		case 1 : dat.Difficulty=1;time_limit=80;Initiate_boardC();break;
+		case 2 : dat.Difficulty=2;time_limit=80;Initiate_boardH();break;
+		case 3 : dat.Difficulty=3;time_limit=40;Initiate_boardH();break;
 		default : printf("maaf tidak ada pilihan angka tersebut");getch();system("cls");SetDiff();break;
 	}
 }
@@ -357,7 +357,7 @@ void show_board(){
 		printf("\n");
 		printf("    %c\n",186);
 	}
-	switch(dat.Diffiticulty){
+	switch(dat.Difficulty){
 		case 1 : printf("Game Difficulty : Casual (Short Mode)\n");break;
 		case 2 : printf("Game Difficulty : Casual \n");break;
 		case 3 : printf("Game Difficulty : Hard\n");break;
@@ -388,7 +388,7 @@ void InputTiles(){
 	char ctiles1[8];char ctiles2[8];
 	ChangeTurn();
 	printf("%s's Turn\n",p.usr[turn]);
-	if(dat.Diffiticulty==1 || dat.Diffiticulty==2){Set_tiles();strcpy(ctiles1,tiles);}
+	if(dat.Difficulty==1 || dat.Difficulty==2){Set_tiles();strcpy(ctiles1,tiles);}
 	else{SetHTiles();strcpy(ctiles1,tiles);
 		scramble(ctiles1,countLengthH(ctiles1));}
 	menu :
@@ -485,7 +485,7 @@ void Set_tiles(){
 }
 void CheckCheat(){
 	//mengecek apakah cheat mode aktif atau tidak khusus tingkat kesulitan hard.
-	if(cht==1 && dat.Diffiticulty==3){
+	if(cht==1 && dat.Difficulty==3){
 		printf("%s\n",tiles);
 	}
 }
@@ -695,7 +695,7 @@ int FindWord(char *search_for_string,int size_s){
     int i;
     char word[1024];
     char last_word[]="ZZZS"; //kata terakhir pada file kamus (words.txt).
-    if(dat.Diffiticulty==3){
+    if(dat.Difficulty==3){
     	if((strstr(tiles,search_for_string))!=NULL){
     		return 1;
 		}
@@ -837,7 +837,7 @@ void set_Bot_Pos(int x,int y,int range){
 }
 void ComputerTurn(){
 	//mengatur pergerakkan komputer berdasarkan kesulitan yang dipilih.
-	switch(dat.Diffiticulty){
+	switch(dat.Difficulty){
 		case 3 : BotHard();break;
 		default : BotEasy();break;
 	}
@@ -1008,7 +1008,7 @@ void ResetGame(){
 void InputScore(){
 	//modular yang menangani penginputan skor kedua player kedalam file scorelist.txt.
 	ptr_to_file=fopen("scorelist.txt","a+");
-	fprintf(ptr_to_file,"%s %d %d\n%s %d %d\n",p.usr[0],dat.Diffiticulty,p.scr[0],p.usr[1],dat.Diffiticulty,p.scr[1]);
+	fprintf(ptr_to_file,"%s %d %d\n%s %d %d\n",p.usr[0],dat.Difficulty,p.scr[0],p.usr[1],dat.Difficulty,p.scr[1]);
 	fclose(ptr_to_file);
 }
 void SortScore(){
@@ -1064,14 +1064,14 @@ int endtime(){ //modular pengambilan waktu saat ini.
 }
 int main(){ //alur utama program.
 	int tilesLimit;
-	dat.Diffiticulty=5;
+	dat.Difficulty=5;
 	MainMenu();
-	switch(dat.Diffiticulty){
+	switch(dat.Difficulty){
 		case 1 : tilesLimit=30;break;
 		default : tilesLimit=100;break;
 	}
 	menu :
-	if(dat.Diffiticulty<=3){
+	if(dat.Difficulty<=3){
 		while(tcount<tilesLimit){
 			show_board();
 		}
